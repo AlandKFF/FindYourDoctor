@@ -1,0 +1,105 @@
+<div class="max-w-7xl mx-auto">
+    <div class="flex flex-col md:flex-row justify-between items-center mb-8">
+        <div>
+            <h1 class="text-3xl font-bold text-gray-900">Find a Hospital</h1>
+            <p class="mt-2 text-gray-600">Discover top medical facilities near you</p>
+        </div>
+        <a href="/form/hospital" class="btn-primary mt-4 md:mt-0">
+            <i class="fas fa-plus-circle mr-2"></i>Add New Hospital
+        </a>
+    </div>
+
+    <!-- Search and Filters -->
+    <form method="GET" action="/hospital" class="bg-white rounded-xl shadow-md p-6 mb-8">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div class="relative">
+                <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                <input type="text" 
+                       name="name" 
+                       placeholder="Search by name..." 
+                       class="input-field pl-10"
+                       value="<%= typeof query.name !== 'undefined' ? query.name : '' %>">
+            </div>
+            <select name="location" class="select-field">
+                <option value="">Filter by Location</option>
+                <% locations.forEach(country => { %>
+                    <optgroup label="<%= country.name %>">
+                        <% country.Cities.forEach(city => { %>
+                            <option value="<%= city.city_id %>" 
+                                    <%= query.location == city.city_id ? 'selected' : '' %>>
+                                <%= city.name %>
+                            </option>
+                        <% }) %>
+                    </optgroup>
+                <% }) %>
+            </select>
+            <select name="service" class="select-field">
+                <option value="">Filter by Service</option>
+                <option value="emergency" <%= query.service == 'emergency' ? 'selected' : '' %>>
+                    Emergency Services
+                </option>
+                <option value="parking" <%= query.service == 'parking' ? 'selected' : '' %>>
+                    Parking Available
+                </option>
+            </select>
+        </div>
+        <div class="mt-6 flex justify-end">
+            <button type="submit" class="btn-primary">
+                <i class="fas fa-filter mr-2"></i>Apply Filters
+            </button>
+        </div>
+    </form>
+
+    <!-- Hospitals Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <% hospitals.forEach(hospital => { %>
+            <div class="card">
+                <div class="relative">
+                    <% if (hospital.Hospital_Galleries && hospital.Hospital_Galleries.length > 0) { %>
+                        <img src="<%= hospital.Hospital_Galleries[0].image_url %>" 
+                             alt="<%= hospital.name %>"
+                             class="w-full h-48 object-cover">
+                    <% } else { %>
+                        <div class="w-full h-48 bg-gray-100 flex items-center justify-center">
+                            <i class="fas fa-hospital text-4xl text-gray-400"></i>
+                        </div>
+                    <% } %>
+                    <% if (hospital.emergency_status) { %>
+                        <div class="absolute top-4 right-4 bg-green-500 text-white px-3 py-1 rounded-full text-sm font-medium">
+                            24/7 Emergency
+                        </div>
+                    <% } %>
+                </div>
+                <div class="p-6">
+                    <h3 class="text-xl font-semibold text-gray-900 mb-2">
+                        <%= hospital.name %>
+                    </h3>
+                    <p class="text-gray-600 flex items-center mb-4">
+                        <i class="fas fa-map-marker-alt mr-2 text-primary-600"></i>
+                        <%= hospital.Village.City.Country.name %>, <%= hospital.Village.City.name %>
+                    </p>
+                    <div class="flex items-center space-x-4 text-sm text-gray-500 mb-4">
+                        <span class="flex items-center">
+                            <i class="fas fa-clock mr-2 text-primary-600"></i>
+                            <%= hospital.open_at %> - <%= hospital.close_at %>
+                        </span>
+                    </div>
+                    <div class="flex flex-wrap gap-2 mb-4">
+                        <% hospital.Facilities.slice(0, 3).forEach(facility => { %>
+                            <span class="badge">
+                                <%= facility.name %>
+                            </span>
+                        <% }) %>
+                    </div>
+                    <div class="mt-4 flex justify-end">
+                        <a href="/hospital/<%= hospital.hospital_id %>" 
+                           class="text-primary-600 hover:text-primary-800 font-medium flex items-center">
+                            View Details
+                            <i class="fas fa-arrow-right ml-2"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        <% }) %>
+    </div>
+</div>

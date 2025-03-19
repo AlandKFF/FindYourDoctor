@@ -1,0 +1,179 @@
+<div class="max-w-7xl mx-auto">
+    <!-- Hospital Header -->
+    <div class="relative h-80 rounded-xl overflow-hidden mb-8">
+        <% if (hospital.Hospital_Galleries && hospital.Hospital_Galleries.length > 0) { %>
+            <img src="<%= hospital.Hospital_Galleries[0].image_url %>" 
+                 alt="<%= hospital.name %>"
+                 class="w-full h-full object-cover">
+        <% } else { %>
+            <div class="w-full h-full bg-gradient-to-r from-primary-600 to-primary-800"></div>
+        <% } %>
+        <div class="absolute inset-0 bg-black bg-opacity-50"></div>
+        <div class="absolute bottom-0 left-0 right-0 p-8">
+            <div class="max-w-3xl">
+                <h1 class="text-4xl font-bold text-white mb-2">
+                    <%= hospital.name %>
+                </h1>
+                <p class="text-xl text-gray-200">
+                    <%= hospital.Village.City.Country.name %>, 
+                    <%= hospital.Village.City.name %>, 
+                    <%= hospital.Village.name %>
+                </p>
+                <% if (hospital.emergency_status) { %>
+                    <div class="mt-4 inline-flex items-center bg-green-500 text-white px-4 py-2 rounded-full">
+                        <i class="fas fa-ambulance mr-2"></i>
+                        24/7 Emergency Services Available
+                    </div>
+                <% } %>
+            </div>
+        </div>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <!-- Left Sidebar -->
+        <div class="space-y-6">
+            <!-- Contact Information -->
+            <div class="card p-6">
+                <h3 class="text-xl font-semibold mb-6">Contact Information</h3>
+                <div class="space-y-4">
+                    <div class="flex items-start space-x-4">
+                        <div class="p-2 bg-primary-100 rounded-lg">
+                            <i class="fas fa-map-marker-alt text-primary-600"></i>
+                        </div>
+                        <div>
+                            <p class="font-medium text-gray-900">Address</p>
+                            <p class="text-gray-600 mt-1"><%= hospital.address %></p>
+                        </div>
+                    </div>
+
+                    <% if (hospital.HospitalPhones && Array.isArray(hospital.HospitalPhones)) { %>
+                        <div class="flex items-start space-x-4">
+                            <div class="p-2 bg-primary-100 rounded-lg">
+                                <i class="fas fa-phone text-primary-600"></i>
+                            </div>
+                            <div>
+                                <p class="font-medium text-gray-900">Phone Numbers</p>
+                                <% hospital.HospitalPhones.forEach(phone => { %>
+                                    <p class="text-gray-600 mt-1"><%= phone.phone_number %></p>
+                                <% }) %>
+                            </div>
+                        </div>
+                    <% } %>
+
+                    <% if (hospital.contact_email) { %>
+                        <div class="flex items-start space-x-4">
+                            <div class="p-2 bg-primary-100 rounded-lg">
+                                <i class="fas fa-envelope text-primary-600"></i>
+                            </div>
+                            <div>
+                                <p class="font-medium text-gray-900">Email</p>
+                                <p class="text-gray-600 mt-1"><%= hospital.contact_email %></p>
+                            </div>
+                        </div>
+                    <% } %>
+
+                    <% if (hospital.website) { %>
+                        <div class="flex items-start space-x-4">
+                            <div class="p-2 bg-primary-100 rounded-lg">
+                                <i class="fas fa-globe text-primary-600"></i>
+                            </div>
+                            <div>
+                                <p class="font-medium text-gray-900">Website</p>
+                                <a href="<%= hospital.website %>" 
+                                   class="text-primary-600 hover:text-primary-800 mt-1 inline-block"
+                                   target="_blank">
+                                    Visit Website
+                                </a>
+                            </div>
+                        </div>
+                    <% } %>
+                </div>
+            </div>
+
+            <!-- Operating Hours -->
+            <div class="card p-6">
+                <h3 class="text-xl font-semibold mb-4">Operating Hours</h3>
+                <div class="flex items-center space-x-4">
+                    <div class="p-3 bg-primary-100 rounded-full">
+                        <i class="fas fa-clock text-primary-600 text-xl"></i>
+                    </div>
+                    <div>
+                        <p class="text-xl font-medium text-gray-900">
+                            <%= hospital.open_at %> - <%= hospital.close_at %>
+                        </p>
+                        <% if (hospital.emergency_status) { %>
+                            <p class="text-green-600 font-medium mt-2">
+                                <i class="fas fa-ambulance mr-2"></i>
+                                24/7 Emergency Services
+                            </p>
+                        <% } %>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Facilities -->
+            <div class="card p-6">
+                <h3 class="text-xl font-semibold mb-4">Facilities & Services</h3>
+                <div class="grid grid-cols-2 gap-3">
+                    <% hospital.Facilities.forEach(facility => { %>
+                        <div class="flex items-center space-x-2 p-3 bg-gray-50 rounded-lg">
+                            <i class="fas fa-check-circle text-primary-600"></i>
+                            <span class="text-gray-700"><%= facility.name %></span>
+                        </div>
+                    <% }) %>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="md:col-span-2 space-y-8">
+            <!-- About Section -->
+            <div class="card p-6">
+                <h2 class="text-2xl font-semibold mb-4">About</h2>
+                <p class="text-gray-700 leading-relaxed"><%= hospital.summary %></p>
+            </div>
+
+            <!-- Doctors Section -->
+            <div class="card p-6">
+                <h2 class="text-2xl font-semibold mb-6">Our Medical Team</h2>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                    <% hospital.Doctors.forEach(doctor => { %>
+                        <div class="flex items-start space-x-4 p-4 border rounded-xl hover:shadow-md transition-shadow">
+                            <img src="<%= doctor.image_url || 'https://via.placeholder.com/100x100' %>" 
+                                 alt="<%= doctor.first_name %> <%= doctor.last_name %>"
+                                 class="w-20 h-20 rounded-full object-cover">
+                            <div>
+                                <h3 class="font-medium text-lg text-gray-900">
+                                    Dr. <%= doctor.first_name %> <%= doctor.last_name %>
+                                </h3>
+                                <p class="text-gray-600 mb-2"><%= doctor.title %></p>
+                                <a href="/doctor/<%= doctor.doctor_id %>" 
+                                   class="text-primary-600 hover:text-primary-800 inline-flex items-center text-sm">
+                                    View Profile
+                                    <i class="fas fa-arrow-right ml-2"></i>
+                                </a>
+                            </div>
+                        </div>
+                    <% }) %>
+                </div>
+            </div>
+
+            <!-- Gallery Section -->
+            <% if (hospital.HospitalGalleries && hospital.HospitalGalleries.length > 0) { %>
+                <div class="card p-6">
+                    <h2 class="text-2xl font-semibold mb-6">Gallery</h2>
+                    <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
+                        <% hospital.HospitalGalleries.forEach(gallery => { %>
+                            <div class="relative group rounded-xl overflow-hidden">
+                                <img src="<%= gallery.image_url %>" 
+                                     alt="Hospital Gallery"
+                                     class="w-full h-48 object-cover transition-transform duration-300 group-hover:scale-110">
+                                <div class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-30 transition-opacity duration-300"></div>
+                            </div>
+                        <% }) %>
+                    </div>
+                </div>
+            <% } %>
+        </div>
+    </div>
+</div>

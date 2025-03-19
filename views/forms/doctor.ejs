@@ -1,0 +1,124 @@
+<div class="max-w-3xl mx-auto">
+    <div class="bg-white rounded-xl shadow-lg p-8">
+        <div class="flex items-center justify-between mb-8">
+            <div>
+                <h1 class="text-3xl font-bold text-gray-900">Add New Doctor</h1>
+                <p class="mt-2 text-gray-600">Enter the doctor's information below</p>
+            </div>
+            <button type="button" onclick="window.history.back()" class="text-gray-600 hover:text-gray-900">
+                <i class="fas fa-times text-xl"></i>
+            </button>
+        </div>
+
+        <form action="/form/doctor" method="POST" class="space-y-8">
+            <!-- Basic Information -->
+            <div class="bg-gray-50 rounded-xl p-6">
+                <h2 class="text-xl font-semibold text-gray-900 mb-6">
+                    <i class="fas fa-user-md mr-2 text-primary-600"></i>Basic Information
+                </h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">First Name</label>
+                        <input type="text" name="first_name" required
+                               class="input-field">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Last Name</label>
+                        <input type="text" name="last_name" required
+                               class="input-field">
+                    </div>
+                </div>
+
+                <div class="mt-6">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Title/Specialization</label>
+                    <input type="text" name="title" required
+                           class="input-field">
+                </div>
+
+                <div class="mt-6">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Biography</label>
+                    <textarea name="bio" rows="4"
+                              class="input-field"></textarea>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Year Started Working</label>
+                        <input type="number" name="year_starting_work" required
+                               class="input-field">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Profile Image URL</label>
+                        <input type="url" name="image_url"
+                               class="input-field">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Certification -->
+            <div class="bg-gray-50 rounded-xl p-6">
+                <h2 class="text-xl font-semibold text-gray-900 mb-6">
+                    <i class="fas fa-certificate mr-2 text-primary-600"></i>Certification
+                </h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Certification Name</label>
+                        <input type="text" name="certification_name"
+                               class="input-field">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Awarding Institution</label>
+                        <input type="text" name="awarding_institution"
+                               class="input-field">
+                    </div>
+                </div>
+                <div class="mt-6">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Award Date</label>
+                    <input type="date" name="awarded_date"
+                           class="input-field">
+                </div>
+            </div>
+
+            <!-- Hospital Affiliations -->
+            <div class="bg-gray-50 rounded-xl p-6">
+                <h2 class="text-xl font-semibold text-gray-900 mb-6">
+                    <i class="fas fa-hospital mr-2 text-primary-600"></i>Hospital Affiliations
+                </h2>
+                <div class="space-y-6">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Select Hospitals</label>
+                        <select name="hospitals" multiple required
+                                class="input-field min-h-[120px]">
+                            <% hospitals.forEach(hospital => { %>
+                                <option value="<%= hospital.hospital_id %>"><%= hospital.name %></option>
+                            <% }) %>
+                        </select>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Available From</label>
+                            <input type="time" name="available_from"
+                                   class="input-field">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Available Until</label>
+                            <input type="time" name="available_until"
+                                   class="input-field">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex justify-end space-x-4">
+                <button type="button" onclick="window.history.back()"
+                        class="px-6 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors duration-200">
+                    Cancel
+                </button>
+                <button type="submit"
+                        class="px-6 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors duration-200">
+                    Add Doctor
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
