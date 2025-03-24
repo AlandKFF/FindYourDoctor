@@ -1,105 +1,48 @@
-<div class="max-w-7xl mx-auto">
-    <div class="flex flex-col md:flex-row justify-between items-center mb-8">
-        <div>
-            <h1 class="text-3xl font-bold text-gray-900">Find a Hospital</h1>
-            <p class="mt-2 text-gray-600">Discover top medical facilities near you</p>
-        </div>
-        <a href="/form/hospital" class="btn-primary mt-4 md:mt-0">
-            <i class="fas fa-plus-circle mr-2"></i>Add New Hospital
-        </a>
+<div class="space-y-8">
+    <div class="flex justify-between items-center">
+        <h1 class="text-3xl font-bold text-gray-900">Find Hospitals</h1>
+<form id="searchForm" action="/hospitals" method="GET" class="relative flex space-x-4">
+  <input type="text" 
+         name="search" 
+         value="<%= typeof search !== 'undefined' ? search : '' %>"
+         placeholder="Search hospitals..." 
+         class="px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500">
+</form>
+<!-- <div id="results" class="results-container"></div> -->
     </div>
 
-    <!-- Search and Filters -->
-    <form method="GET" action="/hospital" class="bg-white rounded-xl shadow-md p-6 mb-8">
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div class="relative">
-                <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
-                <input type="text" 
-                       name="name" 
-                       placeholder="Search by name..." 
-                       class="input-field pl-10"
-                       value="<%= typeof query.name !== 'undefined' ? query.name : '' %>">
-            </div>
-            <select name="location" class="select-field">
-                <option value="">Filter by Location</option>
-                <% locations.forEach(country => { %>
-                    <optgroup label="<%= country.name %>">
-                        <% country.Cities.forEach(city => { %>
-                            <option value="<%= city.city_id %>" 
-                                    <%= query.location == city.city_id ? 'selected' : '' %>>
-                                <%= city.name %>
-                            </option>
-                        <% }) %>
-                    </optgroup>
-                <% }) %>
-            </select>
-            <select name="service" class="select-field">
-                <option value="">Filter by Service</option>
-                <option value="emergency" <%= query.service == 'emergency' ? 'selected' : '' %>>
-                    Emergency Services
-                </option>
-                <option value="parking" <%= query.service == 'parking' ? 'selected' : '' %>>
-                    Parking Available
-                </option>
-            </select>
-        </div>
-        <div class="mt-6 flex justify-end">
-            <button type="submit" class="btn-primary">
-                <i class="fas fa-filter mr-2"></i>Apply Filters
-            </button>
-        </div>
-    </form>
-
-    <!-- Hospitals Grid -->
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         <% hospitals.forEach(hospital => { %>
-            <div class="card">
-                <div class="relative">
-                    <% if (hospital.Hospital_Galleries && hospital.Hospital_Galleries.length > 0) { %>
-                        <img src="<%= hospital.Hospital_Galleries[0].image_url %>" 
-                             alt="<%= hospital.name %>"
-                             class="w-full h-48 object-cover">
-                    <% } else { %>
-                        <div class="w-full h-48 bg-gray-100 flex items-center justify-center">
-                            <i class="fas fa-hospital text-4xl text-gray-400"></i>
-                        </div>
-                    <% } %>
-                    <% if (hospital.emergency_status) { %>
-                        <div class="absolute top-4 right-4 bg-green-500 text-white px-3 py-1 rounded-full text-sm font-medium">
-                            24/7 Emergency
-                        </div>
-                    <% } %>
-                </div>
+            <div class="bg-white rounded-lg shadow-md overflow-hidden">
+                <img src="<%= hospital.image_url || 'https://images.unsplash.com/photo-1632833239869-a37e3a5806d2?w=800&auto=format&fit=crop&q=60&ixlib=rb-4.0.3' %>" 
+                     alt="<%= hospital.name %>"
+                     class="w-full h-48 object-cover">
                 <div class="p-6">
                     <h3 class="text-xl font-semibold text-gray-900 mb-2">
                         <%= hospital.name %>
                     </h3>
-                    <p class="text-gray-600 flex items-center mb-4">
-                        <i class="fas fa-map-marker-alt mr-2 text-primary-600"></i>
-                        <%= hospital.Village.City.Country.name %>, <%= hospital.Village.City.name %>
+                    <p class="text-gray-600 mb-4">
+                        <%= hospital.summary %>
                     </p>
-                    <div class="flex items-center space-x-4 text-sm text-gray-500 mb-4">
-                        <span class="flex items-center">
-                            <i class="fas fa-clock mr-2 text-primary-600"></i>
-                            <%= hospital.open_at %> - <%= hospital.close_at %>
+                    <div class="flex items-center text-sm text-gray-500 mb-4">
+                        <svg class="h-5 w-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+                        </svg>
+                        <%= hospital.area?.name || 'Unknown Area' %>,
+                        <%= hospital.area?.city?.name || 'Unknown City' %>,
+                        <%= hospital.area?.city?.country?.name || 'Unknown Country' %>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <span class="<%= hospital.emergency_status ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' %> px-3 py-1 rounded-full text-sm font-medium">
+                            <%= hospital.emergency_status ? 'Emergency Available' : 'No Emergency' %>
                         </span>
-                    </div>
-                    <div class="flex flex-wrap gap-2 mb-4">
-                        <% hospital.Facilities.slice(0, 3).forEach(facility => { %>
-                            <span class="badge">
-                                <%= facility.name %>
-                            </span>
-                        <% }) %>
-                    </div>
-                    <div class="mt-4 flex justify-end">
-                        <a href="/hospital/<%= hospital.hospital_id %>" 
-                           class="text-primary-600 hover:text-primary-800 font-medium flex items-center">
-                            View Details
-                            <i class="fas fa-arrow-right ml-2"></i>
+                        <a href="/hospitals/<%= hospital.hospital_id %>" class="text-primary-600 hover:text-primary-800 font-medium">
+                            View Details →
                         </a>
                     </div>
                 </div>
             </div>
-        <% }) %>
+        <% }); %>
     </div>
 </div>

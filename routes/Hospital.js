@@ -1,113 +1,96 @@
 const express = require('express');
 const router = express.Router();
-const { Hospital, Village, City, Country, Doctor, HospitalPhone, Facility, HospitalGallery } = require('../models');
+const { Hospital, Doctor, HospitalPhone, HospitalFacility, Area, City, Country, DoctorCertification } = require('../models');
+const { Op } = require('sequelize');
 
-// GET routes
 router.get('/', async (req, res) => {
     try {
-        const { name, location, service } = req.query;
-
-        // Build the query dynamically based on filters
-        const whereConditions = {};
-        if (name) {
-            whereConditions.name = { [Op.like]: `%${name}%` }; // Filter by name (case-insensitive)
-        }
-
-        const includeConditions = [
-            {
-                model: Village,
-                include: {
-                    model: City,
-                    include: Country
-                }
-            },
-            {
-                model: Doctor,
-                through: 'Doctor_Hospital'
-            },
-            {
-                model: HospitalPhone
-            },
-            {
-                model: Facility,
-                through: 'Hospital_Facility'
-            },
-            {
-                model: HospitalGallery
-            }
-        ];
-
-        if (location) {
-            includeConditions[0].include.where = { city_id: location }; // Filter by location
-        }
-
-        if (service) {
-            includeConditions[3].where = { name: service }; // Filter by service
+        const { search } = req.query;
+        let whereClause = {};
+        
+        if (search) {
+            whereClause = {
+                [Op.or]: [
+                    { name: { [Op.like]: `%${search}%` } },
+                    { summary: { [Op.like]: `%${search}%` } },
+                    { address: { [Op.like]: `%${search}%` } }
+                ]
+            };
         }
 
         const hospitals = await Hospital.findAll({
-            where: whereConditions,
-            include: includeConditions
-        });
-        console.log(hospitals[1].dataValues.Hospital_Galleries);
-        
-        // Get unique locations for filter
-        const locations = await Country.findAll({
-            include: {
-                model: City,
-                include: Village
-            }
-        });
-        
-        res.render('hospitals/index', { hospitals, locations, query: req.query, title:'Hospitals' });
-    } catch (error) {
-        console.error('Error fetching hospitals:', error);
-        res.status(500).render('hospitals/index', { 
-            hospitals: [],
-            locations: [],
-            query: req.query,
-            error: 'Failed to fetch hospitals',
-            title:'Hospitals'
-        });
-    }
-});
-
-router.get('/:id', async (req, res) => {
-    try {
-        const hospital = await Hospital.findByPk(req.params.id, {
+            where: whereClause,
             include: [
                 {
-                    model: Village,
-                    include: {
-                        model: City,
-                        include: Country
-                    }
-                },
-                {
-                    model: Doctor,
-                    through: 'Doctor_Hospital'
+                    model: Area,
+                    include: [
+                        {
+                            model: City,
+                            include: [Country]
+                        }
+                    ]
                 },
                 {
                     model: HospitalPhone
                 },
                 {
-                    model: Facility,
-                    through: 'Hospital_Facility'
+                    model: HospitalFacility
                 },
                 {
-                    model: HospitalGallery
+                    model: Doctor,
+                    through: { attributes: [] }
+                }
+            ]
+        });
+        console.log(hospitals);
+        res.render('hospitals/index', { hospitals, search });
+    } catch (error) {
+        console.error('Error fetching hospitals:', error);
+        res.status(500).render('error', { message: 'Failed to fetch hospitals' });
+    }
+});
+
+router.get('/:id', async (req, res) => {
+    try {
+        console.log('Fetching hospital with ID:', req.params.id);
+
+        const hospital = await Hospital.findByPk(req.params.id, {
+            include: [
+                {
+                    model: Area,
+                    include: [
+                        {
+                            model: City,
+                            include: [Country]
+                        }
+                    ]
+                },
+                {
+                    model: HospitalPhone
+                },
+                {
+                    model: HospitalFacility
+                },
+                {
+                    model: Doctor,
+                    include: [DoctorCertification],
+                    through: { attributes: [] }
                 }
             ]
         });
 
+        console.log('Hospital fetched:', hospital);
+
         if (!hospital) {
+            console.log('Hospital not found');
             return res.status(404).render('error', { message: 'Hospital not found' });
         }
 
-        res.render('hospitals/profile', { hospital, title:'Hospitals' });
+        console.log('Rendering hospital profile');
+        res.render('hospitals/profile', { hospital });
     } catch (error) {
-        console.error('Error fetching hospital:', error);
-        res.status(500).render('error', { message: 'Error fetching hospital details',title:'Hospitals' });
+        console.error('Error fetching hospital profile:', error);
+        res.status(500).render('error', { message: 'Failed to fetch hospital profile' });
     }
 });
 

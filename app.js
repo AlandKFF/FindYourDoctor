@@ -1,6 +1,10 @@
 const express = require('express');
+const http = require('http');
+const socketIo = require('socket.io');
 
 const app = express();
+const server = http.createServer(app); // Create HTTP server
+const io = socketIo(server); // Attach Socket.IO to server
 const PORT = process.env.PORT || 3000;
 
 const bodyParser = require('body-parser');
@@ -8,12 +12,12 @@ const path = require('path');
 const expressLayouts = require('express-ejs-layouts');
 const methodOverride = require('method-override');
 require('dotenv').config();
-const {sequelize} = require('./models');
+const { sequelize } = require('./models');
 
 // Import routes
 const DoctorRouter = require('./routes/Doctor');
 const HospitalRouter = require('./routes/Hospital');
-const FormRouter = require('./routes/Form')
+const FormRouter = require('./routes/Form');
 const SeedRouter = require('./routes/seed.js');
 
 // Middlewares
@@ -29,20 +33,15 @@ app.use(expressLayouts); // Enable layouts
 app.set('layout', 'layouts/main'); // Set default layout
 
 // Using routes
-app.use('/doctor', DoctorRouter);
-app.use('/hospital', HospitalRouter); 
-app.use('/form', FormRouter); 
-app.use('/seed', SeedRouter); 
+app.use('/doctors', DoctorRouter);
+app.use('/hospitals', HospitalRouter);
+app.use('/forms', FormRouter);
+app.use('/seed', SeedRouter);
 
-// Main route
-app.get('/', (req, res) => {
-    res.redirect('/doctor');
-});
-
-// { force: true }
-sequelize.sync()
+// Sync Sequelize & Start Server 
+sequelize.sync() // {force: true}
     .then(() => {
-        app.listen(PORT, () => {
+        server.listen(PORT, () => {
             console.log(`Server is running on port ${PORT}`);
         });
     })

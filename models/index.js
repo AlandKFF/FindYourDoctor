@@ -1,23 +1,31 @@
 const { Sequelize, DataTypes } = require('sequelize');
 require('dotenv').config();
-const DB_password = process.env.DB_PASSWORD;
+// const DB_password = process.env.DB_PASSWORD
 
-const sequelize = new Sequelize('find_your_doctor', 'root', DB_password, {
-    host: 'localhost',
-    dialect: 'mysql' 
-});
+const sequelize = new Sequelize(
+  process.env.DB_NAME || "find_your_doctor",    // Database name
+  process.env.DB_USER || "root",    // Username
+  process.env.DB_PASSWORD, // Password
+  {
+    host: process.env.DB_HOST || 'localhost', // Hostname
+    dialect: 'mysql',
+    dialectOptions: {
+      // Depending on InfinityFree, SSL may not be required:
+      // ssl: { require: true, rejectUnauthorized: false }
+    }
+  }
+);
 
 sequelize.authenticate()
-    .then(() => {
-        console.log('Connection to find_your_doctor database has been established successfully.');
-    })
-    .catch(err => {
-        console.error('Unable to connect to the database:', err);
-    });
+  .then(() => {
+    console.log('Connection to find_your_doctor database has been established successfully.');
+  })
+  .catch(err => {
+    console.error('Unable to connect to the database:', err);
+  });
 
-// --- Geographic Hierarchy ---
-
-const Country = sequelize.define('Country', {
+// --- Geographic Data ---
+const Country = sequelize.define('countries', {
     country_id: {
         type: DataTypes.INTEGER,
         primaryKey: true,
@@ -29,7 +37,7 @@ const Country = sequelize.define('Country', {
     }
 }, { timestamps: false });
 
-const City = sequelize.define('City', {
+const City = sequelize.define('cities', {
     city_id: {
         type: DataTypes.INTEGER,
         primaryKey: true,
@@ -48,8 +56,8 @@ const City = sequelize.define('City', {
     }
 }, { timestamps: false });
 
-const Village = sequelize.define('Village', {
-    village_id: {
+const Area = sequelize.define('areas', {
+    area_id: {
         type: DataTypes.INTEGER,
         primaryKey: true,
         autoIncrement: true
@@ -67,19 +75,19 @@ const Village = sequelize.define('Village', {
     }
 }, { timestamps: false });
 
-// --- Hospital Data ---
 
-const Hospital = sequelize.define('Hospital', {
+// --- Hospital Data ---
+const Hospital = sequelize.define('hospitals', {
     hospital_id: {
         type: DataTypes.INTEGER,
         primaryKey: true,
         autoIncrement: true
     },
-    village_id: {
+    area_id: {
         type: DataTypes.INTEGER,
         references: {
-            model: Village,
-            key: 'village_id'
+            model: Area,
+            key: 'area_id'
         }
     },
     name: {
@@ -102,20 +110,17 @@ const Hospital = sequelize.define('Hospital', {
     website: {
         type: DataTypes.STRING
     },
-    parking_availability: {
+    is_private: {
         type: DataTypes.BOOLEAN,
         defaultValue: false
     },
-    open_at: {
-        type: DataTypes.TIME
+    image_url: {
+        type: DataTypes.STRING
     },
-    close_at: {
-        type: DataTypes.TIME
-    }
 }, { timestamps: false });
 
-const HospitalPhone = sequelize.define('Hospital_Phone', {
-    phone_id: {
+const HospitalPhone = sequelize.define('hospital_phones', {
+    Hospital_phone_id: {
         type: DataTypes.INTEGER,
         primaryKey: true,
         autoIncrement: true
@@ -133,11 +138,15 @@ const HospitalPhone = sequelize.define('Hospital_Phone', {
     }
 }, { timestamps: false });
 
-const HospitalGallery = sequelize.define('Hospital_Gallery', {
-    gallery_id: {
+const HospitalFacility = sequelize.define('hospital_facilities', {
+    hospital_facility_id: {
         type: DataTypes.INTEGER,
         primaryKey: true,
         autoIncrement: true
+    },
+    facility_name: {
+        type: DataTypes.STRING,
+        allowNull: false
     },
     hospital_id: {
         type: DataTypes.INTEGER,
@@ -146,46 +155,10 @@ const HospitalGallery = sequelize.define('Hospital_Gallery', {
             key: 'hospital_id'
         }
     },
-    image_url: {
-        type: DataTypes.STRING,
-        allowNull: false
-    }
-}, { timestamps: false });
-
-const Facility = sequelize.define('Facility', {
-    facility_id: {
-        type: DataTypes.INTEGER,
-        primaryKey: true,
-        autoIncrement: true
-    },
-    name: {
-        type: DataTypes.STRING,
-        allowNull: false
-    }
-}, { timestamps: false });
-
-const HospitalFacility = sequelize.define('Hospital_Facility', {
-    hospital_id: {
-        type: DataTypes.INTEGER,
-        primaryKey: true,
-        references: {
-            model: Hospital,
-            key: 'hospital_id'
-        }
-    },
-    facility_id: {
-        type: DataTypes.INTEGER,
-        primaryKey: true,
-        references: {
-            model: Facility,
-            key: 'facility_id'
-        }
-    }
 }, { timestamps: false });
 
 // --- Doctor Data ---
-
-const Doctor = sequelize.define('Doctor', {
+const Doctor = sequelize.define('doctors', {
     doctor_id: {
         type: DataTypes.INTEGER,
         primaryKey: true,
@@ -205,16 +178,13 @@ const Doctor = sequelize.define('Doctor', {
     bio: {
         type: DataTypes.TEXT
     },
-    year_starting_work: {
-        type: DataTypes.INTEGER
-    },
     image_url: {
         type: DataTypes.STRING
     }
 }, { timestamps: false });
 
-const DoctorCertification = sequelize.define('Doctor_Certification', {
-    certification_id: {
+const DoctorCertification = sequelize.define('doctor_certifications', {
+    doctor_certification: {
         type: DataTypes.INTEGER,
         primaryKey: true,
         autoIncrement: true
@@ -226,7 +196,11 @@ const DoctorCertification = sequelize.define('Doctor_Certification', {
             key: 'doctor_id'
         }
     },
-    certification_name: {
+    title: {
+        type: DataTypes.STRING,
+        allowNull: false
+    },
+    degree_level: {
         type: DataTypes.STRING,
         allowNull: false
     },
@@ -239,7 +213,12 @@ const DoctorCertification = sequelize.define('Doctor_Certification', {
     }
 }, { timestamps: false });
 
-const DoctorHospital = sequelize.define('Doctor_Hospital', {
+const DoctorHospital = sequelize.define('doctor_hospitals', {
+    doctor_hospital_id: {
+        type: DataTypes.INTEGER,
+        primaryKey: true,
+        autoIncrement: true
+    },
     doctor_id: {
         type: DataTypes.INTEGER,
         primaryKey: true,
@@ -256,12 +235,6 @@ const DoctorHospital = sequelize.define('Doctor_Hospital', {
             key: 'hospital_id'
         }
     },
-    available_from: {
-        type: DataTypes.TIME
-    },
-    available_until: {
-        type: DataTypes.TIME
-    }
 }, { timestamps: false });
 
 // --- Associations ---
@@ -269,23 +242,16 @@ const DoctorHospital = sequelize.define('Doctor_Hospital', {
 // Geographic associations
 Country.hasMany(City, { foreignKey: 'country_id' });
 City.belongsTo(Country, { foreignKey: 'country_id' });
-City.hasMany(Village, { foreignKey: 'city_id' });
-Village.belongsTo(City, { foreignKey: 'city_id' });
+City.hasMany(Area, { foreignKey: 'city_id' });
+Area.belongsTo(City, { foreignKey: 'city_id' });
 
 // Village to Hospital
-Village.hasMany(Hospital, { foreignKey: 'village_id' });
-Hospital.belongsTo(Village, { foreignKey: 'village_id' });
+Area.hasMany(Hospital, { foreignKey: 'area_id' });
+Hospital.belongsTo(Area, { foreignKey: 'area_id' });
 
 // Hospital associations
 Hospital.hasMany(HospitalPhone, { foreignKey: 'hospital_id' });
 HospitalPhone.belongsTo(Hospital, { foreignKey: 'hospital_id' });
-
-Hospital.hasMany(HospitalGallery, { foreignKey: 'hospital_id' });
-HospitalGallery.belongsTo(Hospital, { foreignKey: 'hospital_id' });
-
-// Hospital and Facility many-to-many
-Hospital.belongsToMany(Facility, { through: HospitalFacility, foreignKey: 'hospital_id' });
-Facility.belongsToMany(Hospital, { through: HospitalFacility, foreignKey: 'facility_id' });
 
 // Doctor associations
 Doctor.hasMany(DoctorCertification, { foreignKey: 'doctor_id' });
@@ -295,15 +261,17 @@ DoctorCertification.belongsTo(Doctor, { foreignKey: 'doctor_id' });
 Doctor.belongsToMany(Hospital, { through: DoctorHospital, foreignKey: 'doctor_id' });
 Hospital.belongsToMany(Doctor, { through: DoctorHospital, foreignKey: 'hospital_id' });
 
+// Association for HospitalFacility
+Hospital.hasMany(HospitalFacility, { foreignKey: 'hospital_id' });
+HospitalFacility.belongsTo(Hospital, { foreignKey: 'hospital_id' });
+
 module.exports = {
     sequelize,
     Country,
     City,
-    Village,
+    Area,
     Hospital,
     HospitalPhone,
-    HospitalGallery,
-    Facility,
     HospitalFacility,
     Doctor,
     DoctorCertification,

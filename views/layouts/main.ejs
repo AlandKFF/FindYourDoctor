@@ -3,176 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MedConnect Pro - <%= title %></title>
-    <link rel="stylesheet" href="https://rsms.me/inter/inter.css">
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <style>
-        :root {
-            --primary-color: #2563eb;
-            --secondary-color: #1e40af;
-        }
-        
-        body {
-            font-family: 'Inter', sans-serif;
-        }
+    <title>Find Your Doctor</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/css/style.css">
+    <!-- <script src="/socket.io/socket.io.js"></script> -->
+    <script src="/js/index.js"></script>
 
-        .nav-link {
-            @apply px-4 py-2 text-gray-600 hover:text-primary transition-colors duration-200;
-        }
 
-        .nav-link.active {
-            color: var(--primary-color);
-            font-weight: 600;
-        }
-
-        .btn-primary {
-            @apply bg-primary-600 text-white px-6 py-2 rounded-lg hover:bg-primary-700 transition-colors duration-200 inline-flex items-center justify-center;
-        }
-
-        .card {
-            @apply bg-white rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 overflow-hidden;
-        }
-
-        .input-field {
-            @apply w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none transition-all duration-200;
-        }
-
-        .select-field {
-            @apply w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none transition-all duration-200 bg-white;
-        }
-
-        .badge {
-            @apply px-3 py-1 rounded-full text-sm font-medium bg-primary-100 text-primary-800;
-        }
-
-        .section-title {
-            @apply text-2xl font-bold text-gray-900 mb-6;
-        }
-    </style>
 </head>
 <body class="min-h-screen bg-gray-50">
-    <!-- Navigation -->
-    <nav class="sticky top-0 z-50 w-full border-b bg-white shadow-sm">
-        <div class="container mx-auto px-4 flex h-16 items-center">
-            <div class="mr-8 flex">
-                <a href="/" class="flex items-center space-x-2">
-                    <i class="fas fa-hospital text-primary-600 text-2xl"></i>
-                    <span class="font-bold text-xl">MedConnect<span class="text-primary-600">Pro</span></span>
-                </a>
-            </div>
-            <div class="hidden md:flex space-x-6">
-                <a href="/doctor" class="nav-link <%= title === 'Doctors' ? 'active' : '' %>">
-                    <i class="fas fa-user-md mr-2"></i>Find Doctors
-                </a>
-                <a href="/hospital" class="nav-link <%= title === 'Hospitals' ? 'active' : '' %>">
-                    <i class="fas fa-hospital-alt mr-2"></i>Hospitals
-                </a>
-                <a href="/form/doctor" class="nav-link <%= title === 'Add Doctor' ? 'active' : '' %>">
-                    <i class="fas fa-user-plus mr-2"></i>Add Doctor
-                </a>
-                <a href="/form/hospital" class="nav-link <%= title === 'Add Hospital' ? 'active' : '' %>">
-                    <i class="fas fa-plus-circle mr-2"></i>Add Hospital
-                </a>
-            </div>
-            <!-- Mobile menu button -->
-            <button class="md:hidden p-2">
-                <i class="fas fa-bars text-gray-600 text-xl"></i>
-            </button>
-        </div>
-    </nav>
-
-    <!-- Main Content -->
+    <%- include('./navbar') %>
+    
     <main class="container mx-auto px-4 py-8">
         <%- body %>
     </main>
 
-    <!-- Footer -->
-    <footer class="bg-gray-900 text-white">
-        <div class="container mx-auto px-4 py-12">
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-8">
-                <div>
-                    <h3 class="text-lg font-semibold mb-4">About</h3>
-                    <ul class="space-y-2">
-                        <li><a href="#" class="text-gray-400 hover:text-white transition-colors">About Us</a></li>
-                        <li><a href="#" class="text-gray-400 hover:text-white transition-colors">Careers</a></li>
-                        <li><a href="#" class="text-gray-400 hover:text-white transition-colors">Press</a></li>
-                    </ul>
-                </div>
-                <div>
-                    <h3 class="text-lg font-semibold mb-4">Resources</h3>
-                    <ul class="space-y-2">
-                        <li><a href="#" class="text-gray-400 hover:text-white transition-colors">Blog</a></li>
-                        <li><a href="#" class="text-gray-400 hover:text-white transition-colors">Help Center</a></li>
-                        <li><a href="#" class="text-gray-400 hover:text-white transition-colors">Guidelines</a></li>
-                    </ul>
-                </div>
-                <div>
-                    <h3 class="text-lg font-semibold mb-4">Legal</h3>
-                    <ul class="space-y-2">
-                        <li><a href="#" class="text-gray-400 hover:text-white transition-colors">Privacy</a></li>
-                        <li><a href="#" class="text-gray-400 hover:text-white transition-colors">Terms</a></li>
-                        <li><a href="#" class="text-gray-400 hover:text-white transition-colors">Cookie Policy</a></li>
-                    </ul>
-                </div>
-                <div>
-                    <h3 class="text-lg font-semibold mb-4">Connect</h3>
-                    <div class="flex space-x-4">
-                        <a href="#" class="text-gray-400 hover:text-white transition-colors">
-                            <i class="fab fa-twitter text-xl"></i>
-                        </a>
-                        <a href="#" class="text-gray-400 hover:text-white transition-colors">
-                            <i class="fab fa-linkedin text-xl"></i>
-                        </a>
-                        <a href="#" class="text-gray-400 hover:text-white transition-colors">
-                            <i class="fab fa-facebook text-xl"></i>
-                        </a>
-                    </div>
-                </div>
-            </div>
-            <div class="mt-12 pt-8 border-t border-gray-800">
-                <div class="flex flex-col md:flex-row justify-between items-center">
-                    <div class="flex items-center space-x-2">
-                        <i class="fas fa-hospital text-primary-500 text-2xl"></i>
-                        <span class="font-bold text-xl">MedConnect<span class="text-primary-500">Pro</span></span>
-                    </div>
-                    <p class="text-gray-400 text-sm mt-4 md:mt-0">
-                        © <%= new Date().getFullYear() %> MedConnectPro. All rights reserved.
-                    </p>
-                </div>
-            </div>
-        </div>
-    </footer>
+    <%- include('./footer') %>
 
-    <!-- Mobile menu -->
-    <div class="hidden fixed inset-0 z-50 bg-gray-900 bg-opacity-50" id="mobile-menu">
-        <div class="bg-white h-full w-64 shadow-xl">
-            <div class="p-4">
-                <div class="flex justify-between items-center mb-8">
-                    <a href="/" class="flex items-center space-x-2">
-                        <i class="fas fa-hospital text-primary-600 text-2xl"></i>
-                        <span class="font-bold text-xl">MedConnect<span class="text-primary-600">Pro</span></span>
-                    </a>
-                    <button class="p-2" onclick="document.getElementById('mobile-menu').classList.add('hidden')">
-                        <i class="fas fa-times text-gray-600 text-xl"></i>
-                    </button>
-                </div>
-                <nav class="space-y-4">
-                    <a href="/doctor" class="block py-2 px-4 text-gray-600 hover:bg-gray-100 rounded-lg">
-                        <i class="fas fa-user-md mr-2"></i>Find Doctors
-                    </a>
-                    <a href="/hospital" class="block py-2 px-4 text-gray-600 hover:bg-gray-100 rounded-lg">
-                        <i class="fas fa-hospital-alt mr-2"></i>Hospitals
-                    </a>
-                    <a href="/form/doctor" class="block py-2 px-4 text-gray-600 hover:bg-gray-100 rounded-lg">
-                        <i class="fas fa-user-plus mr-2"></i>Add Doctor
-                    </a>
-                    <a href="/form/hospital" class="block py-2 px-4 text-gray-600 hover:bg-gray-100 rounded-lg">
-                        <i class="fas fa-plus-circle mr-2"></i>Add Hospital
-                    </a>
-                </nav>
-            </div>
-        </div>
-    </div>
+    <script src="/js/main.js"></script>
 </body>
 </html>

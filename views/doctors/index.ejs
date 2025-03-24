@@ -1,79 +1,68 @@
-<div class="max-w-7xl mx-auto">
-    <div class="flex flex-col md:flex-row justify-between items-center mb-8">
-        <div>
-            <h1 class="text-3xl font-bold text-gray-900">Find Your Doctor</h1>
-            <p class="mt-2 text-gray-600">Connect with the best healthcare professionals</p>
-        </div>
-        <a href="/form/doctor" class="btn-primary mt-4 md:mt-0">
-            <i class="fas fa-plus-circle mr-2"></i>Add New Doctor
-        </a>
+<div class="space-y-8">
+    <div class="flex justify-between items-center">
+        <h1 class="text-3xl font-bold text-gray-900">Find Doctors</h1>
+        <form action="/doctors" method="GET" class="flex space-x-4">
+            <input type="text" 
+                   name="search" 
+                   value="<%= typeof search !== 'undefined' ? search : '' %>"
+                   placeholder="Search doctors..." 
+                   class="px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500">
+        </form>
+        <!-- <div id="results" class="my-4"></div> -->
     </div>
 
-    <!-- Search and Filters -->
-    <div class="bg-white rounded-xl shadow-md p-6 mb-8">
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div class="relative">
-                <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
-                <input type="text" 
-                       placeholder="Search by name..." 
-                       class="input-field pl-10">
-            </div>
-            <select class="select-field">
-                <option value="">Filter by Location</option>
-                <% locations.forEach(country => { %>
-                    <optgroup label="<%= country.name %>">
-                        <% country.Cities.forEach(city => { %>
-                            <option value="<%= city.city_id %>"><%= city.name %></option>
-                        <% }) %>
-                    </optgroup>
-                <% }) %>
-            </select>
-            <select class="select-field">
-                <option value="">Sort by</option>
-                <option value="name">Name</option>
-                <option value="experience">Experience</option>
-            </select>
-        </div>
-    </div>
-
-    <!-- Doctors Grid -->
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         <% doctors.forEach(doctor => { %>
-            <div class="card">
-                <div class="relative">
-                    <img src="<%= doctor.image_url || 'https://via.placeholder.com/300x400' %>" 
-                         alt="<%= doctor.first_name %> <%= doctor.last_name %>"
-                         class="w-full h-96 object-cover">
-                    <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black to-transparent p-4">
-                        <h3 class="text-white text-lg font-semibold">
-                            Dr. <%= doctor.first_name %> <%= doctor.last_name %>
-                        </h3>
-                        <p class="text-gray-200"><%= doctor.title %></p>
-                    </div>
-                </div>
+            <div class="bg-white rounded-lg shadow-md overflow-hidden">
                 <div class="p-6">
-                    <div class="flex flex-wrap gap-2 mb-4">
-                        <% doctor.Hospitals.forEach(hospital => { %>
-                            <span class="badge">
-                                <%= hospital.name %>
-                            </span>
-                        <% }) %>
-                    </div>
-                    <div class="flex items-center justify-between">
-                        <div class="flex items-center space-x-2">
-                            <i class="fas fa-clock text-gray-400"></i>
-                            <span class="text-gray-600">
-                                <%= new Date().getFullYear() - doctor.year_starting_work %> years experience
-                            </span>
+                    <div class="flex items-center mb-4">
+                        <img src="<%= doctor.image_url || 'https://images.unsplash.com/photo-1537368910025-700350fe46c7?w=800&auto=format&fit=crop&q=60&ixlib=rb-4.0.3' %>" 
+                             alt="<%= doctor.first_name %> <%= doctor.last_name %>"
+                             class="h-20 w-20 rounded-full object-cover mr-4">
+                        <div>
+                            <h3 class="text-xl font-semibold text-gray-900">
+                                <%= doctor.title %> <%= doctor.first_name %> <%= doctor.last_name %>
+                            </h3>
+                            <p class="text-gray-600">
+                                <%= doctor.doctor_certifications[0]?.title || 'Specialist' %>
+                            </p>
                         </div>
-                        <a href="/doctor/<%= doctor.doctor_id %>" 
-                           class="text-primary-600 hover:text-primary-800 font-medium flex items-center">
-                            View Profile
-                            <i class="fas fa-arrow-right ml-2"></i>
+                    </div>
+                    
+                    <p class="text-gray-600 mb-4 line-clamp-3">
+                        <%= doctor.bio %>
+                    </p>
+
+                    <div class="space-y-4 mb-4">
+                        <% (doctor.hospitals || []).slice(0, 2).forEach(hospital => { %>
+                            <div class="flex items-start space-x-3">
+                                <img src="<%= hospital.image_url || 'https://images.unsplash.com/photo-1632833239869-a37e3a5806d2?w=800&auto=format&fit=crop&q=60&ixlib=rb-4.0.3' %>" 
+                                     alt="<%= hospital.name %>"
+                                     class="h-12 w-12 rounded-md object-cover flex-shrink-0">
+                                <div>
+                                    <h4 class="font-medium text-gray-900"><%= hospital.name %></h4>
+                                    <p class="text-sm text-gray-500">
+                                        <%= hospital.area?.city?.name %>, <%= hospital.area?.city?.country?.name %>
+                                    </p>
+                                </div>
+                            </div>
+                        <% }); %>
+                    </div>
+
+                    <div class="flex justify-between items-center">
+                        <div class="flex space-x-2">
+                            <% doctor.doctor_certifications.slice(0, 2).forEach(cert => { %>
+                                <span class="bg-primary-100 text-primary-800 text-xs px-2 py-1 rounded">
+                                    <%= cert.degree_level %>
+                                </span>
+                            <% }); %>
+                        </div>
+                        <a href="/doctors/<%= doctor.doctor_id %>" class="text-primary-600 hover:text-primary-800 font-medium">
+                            View Profile →
                         </a>
                     </div>
                 </div>
             </div>
-        <% }) %>
+        <% }); %>
     </div>
 </div>

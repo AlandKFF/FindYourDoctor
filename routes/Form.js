@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { Doctor, Hospital, Country, City, Village, HospitalPhone, Facility, HospitalGallery, DoctorHospital } = require('../models');
+const { Doctor, Hospital, Country, City, HospitalPhone, DoctorHospital } = require('../models');
 
 // GET routes
 router.get('/doctor', async (req, res) => {
