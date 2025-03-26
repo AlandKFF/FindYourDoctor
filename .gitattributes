@@ -1,2 +1,20 @@
 # Auto detect text files and perform LF normalization
 * text=auto
+# Set specific file types to use LF or CRLF line endings
+*.sh text eol=lf
+*.bat text eol=crlf
+*.md text eol=lf
+*.json text eol=lf
+*.yml text eol=lf
+*.yaml text eol=lf
+*.cs text eol=crlf
+*.js text eol=lf
+*.html text eol=lf
+*.css text eol=lf
+# Ignore node_modules and other generated files
+node_modules/* -text
+dist/* -text
+build/* -text
+*.log -text
+*.lock -text
+*.tmp -text
