@@ -39,7 +39,7 @@ router.get('/', async (req, res) => {
                 }
             ]
         });
-        res.render('doctors/index', { doctors, search });
+        res.render('doctors/index', { doctors, search, title: 'Doctors' });
     } catch (error) {
         console.error('Error fetching doctors:', error);
         res.status(500).render('error', { message: 'Failed to fetch doctors' });
@@ -57,7 +57,7 @@ router.get('/create', async (req, res) => {
                 }]
             }]
         });
-        res.render('doctors/create', { hospitals });
+        res.render('doctors/create', { hospitals, title: 'Create Doctor' });
     } catch (error) {
         console.error('Error loading create doctor form:', error);
         res.status(500).render('error', { message: 'Failed to load create form' });
@@ -130,7 +130,7 @@ router.get('/:id/edit', async (req, res) => {
             }]
         });
 
-        res.render('doctors/edit', { doctor, hospitals });
+        res.render('doctors/edit', { doctor, hospitals, title: 'Edit Doctor' });
     } catch (error) {
         console.error('Error loading edit doctor form:', error);
         res.status(500).render('error', { message: 'Failed to load edit form' });
@@ -204,7 +204,7 @@ router.get('/:id', async (req, res) => {
             return res.status(404).render('error', { message: 'Doctor not found' });
         }
         
-        res.render('doctors/profile', { doctor });
+        res.render('doctors/profile', { doctor, title: 'Doctor Profile' });
     } catch (error) {
         console.error('Error fetching doctor profile:', error);
         res.status(500).render('error', { message: 'Failed to fetch doctor profile' });

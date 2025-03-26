@@ -43,7 +43,7 @@ router.get('/', async (req, res) => {
             ]
         });
         console.log(hospitals);
-        res.render('hospitals/index', { hospitals, search });
+        res.render('hospitals/index', { hospitals, search, title: 'Hospitals' });
     } catch (error) {
         console.error('Error fetching hospitals:', error);
         res.status(500).render('error', { message: 'Failed to fetch hospitals' });
@@ -58,7 +58,7 @@ router.get('/create', async (req, res) => {
                 include: [Country]
             }]
         });
-        res.render('hospitals/create', { areas });
+        res.render('hospitals/create', { areas, title: 'Create Hospital' });
     } catch (error) {
         console.error('Error loading create hospital form:', error);
         res.status(500).render('error', { message: 'Failed to load create form' });
@@ -143,7 +143,7 @@ router.get('/:id/edit', async (req, res) => {
             }]
         });
 
-        res.render('hospitals/edit', { hospital, areas });
+        res.render('hospitals/edit', { hospital, areas, title: `Edit ${hospital.name}` });
     } catch (error) {
         console.error('Error loading edit hospital form:', error);
         res.status(500).render('error', { message: 'Failed to load edit form' });
@@ -249,7 +249,7 @@ router.get('/:id', async (req, res) => {
         }
 
         console.log('Rendering hospital profile');
-        res.render('hospitals/profile', { hospital });
+        res.render('hospitals/profile', { hospital, title: hospital.name });
     } catch (error) {
         console.error('Error fetching hospital profile:', error);
         res.status(500).render('error', { message: 'Failed to fetch hospital profile' });

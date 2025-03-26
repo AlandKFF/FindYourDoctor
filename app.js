@@ -1,10 +1,5 @@
 const express = require('express');
-const http = require('http');
-const socketIo = require('socket.io');
-
 const app = express();
-const server = http.createServer(app); // Create HTTP server
-const io = socketIo(server); // Attach Socket.IO to server
 const PORT = process.env.PORT || 3000;
 
 const bodyParser = require('body-parser');
@@ -17,7 +12,6 @@ const { sequelize } = require('./models');
 // Import routes
 const DoctorRouter = require('./routes/Doctor');
 const HospitalRouter = require('./routes/Hospital');
-const FormRouter = require('./routes/Form');
 const SeedRouter = require('./routes/seed.js');
 
 // Middlewares
@@ -35,13 +29,24 @@ app.set('layout', 'layouts/main'); // Set default layout
 // Using routes
 app.use('/doctors', DoctorRouter);
 app.use('/hospitals', HospitalRouter);
-app.use('/forms', FormRouter);
 app.use('/seed', SeedRouter);
+
+app.get('/', (req, res) => {
+    res.render('index', { title: 'Home' });
+});
+
+app.get('/about', (req, res) => {
+    res.render('about', { title: 'About' });
+});
+
+app.get('/contact', (req, res) => {
+    res.render('contact', { title: 'Contact' });
+});
 
 // Sync Sequelize & Start Server 
 sequelize.sync( {force: true}) // {force: true}
     .then(() => {
-        server.listen(PORT, () => {
+        app.listen(PORT, () => {
             console.log(`Server is running on port ${PORT}`);
         });
     })

@@ -10,19 +10,38 @@
                 </a>
             </div>
             
+            <!-- Desktop Menu -->
             <div class="hidden md:flex items-center space-x-8">
                 <a href="/doctors" class="text-black hover:text-primary-200 transition-colors">Doctors</a>
                 <a href="/hospitals" class="text-black hover:text-primary-200 transition-colors">Hospitals</a>
-                <a href="/login" class="text-black hover:text-primary-200 transition-colors">login</a>
+                <a href="/about" class="text-black hover:text-primary-200 transition-colors">about</a>
+                <a href="/contact" class="text-black hover:text-primary-200 transition-colors">contact</a>
             </div>
 
+            <!-- Mobile Menu Button -->
             <div class="md:hidden">
-                <button class="text-black hover:text-primary-200">
+                <button id="menu-toggle" class="text-black hover:text-primary-200">
                     <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
                     </svg>
                 </button>
             </div>
         </div>
+
+        <!-- Mobile Menu -->
+        <div id="mobile-menu" class="hidden md:hidden flex-col space-y-4 mt-4">
+            <a href="/doctors" class="block text-black hover:text-primary-200 transition-colors">Doctors</a>
+            <a href="/hospitals" class="block text-black hover:text-primary-200 transition-colors">Hospitals</a>
+            <a href="/about" class="block text-black hover:text-primary-200 transition-colors">about</a>
+            <a href="/contact" class="block text-black hover:text-primary-200 transition-colors">contact</a>
+        </div>
     </div>
 </nav>
+
+<script>
+    // JavaScript to toggle the mobile menu
+    document.getElementById('menu-toggle').addEventListener('click', function () {
+        const mobileMenu = document.getElementById('mobile-menu');
+        mobileMenu.classList.toggle('hidden');
+    });
+</script>
