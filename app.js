@@ -39,7 +39,7 @@ app.use('/forms', FormRouter);
 app.use('/seed', SeedRouter);
 
 // Sync Sequelize & Start Server 
-sequelize.sync() // {force: true}
+sequelize.sync( {force: true}) // {force: true}
     .then(() => {
         server.listen(PORT, () => {
             console.log(`Server is running on port ${PORT}`);

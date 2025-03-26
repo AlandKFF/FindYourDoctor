@@ -1,4 +1,22 @@
-<div class="max-w-4xl mx-auto bg-white rounded-xl shadow-md overflow-hidden">
+<div class="relative max-w-4xl mx-auto bg-white rounded-xl shadow-md overflow-hidden">
+    <!-- Absolute positioned edit button with background and icon -->
+ <div class="absolute top-4 right-4 flex space-x-2">
+        <!-- Create button -->
+        <a href="/doctors/create" class="bg-blue-500 hover:bg-blue-600 text-white p-2 rounded-full">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="currentColor" viewBox="0 0 20 20">
+                <path d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z"/>
+            </svg>
+        </a>
+        <!-- Edit button -->
+        <a href="/doctors/<%= doctor.doctor_id %>/edit" class="bg-blue-500 hover:bg-blue-600 text-white p-2 rounded-full">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="currentColor" viewBox="0 0 20 20">
+                <path d="M17.414 2.586a2 2 0 00-2.828 0L7 10.172V13h2.828l7.586-7.586a2 2 0 000-2.828z"/>
+            </svg>
+        </a>
+    </div>
+
+    
+
     <div class="p-8">
         <div class="flex items-start space-x-6">
             <img src="<%= doctor.image_url || 'https://via.placeholder.com/300' %>" 

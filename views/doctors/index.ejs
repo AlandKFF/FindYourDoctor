@@ -2,8 +2,8 @@
     <div class="flex justify-between items-center">
         <h1 class="text-3xl font-bold text-gray-900">Find Doctors</h1>
         <form action="/doctors" method="GET" class="flex space-x-4">
-            <input type="text" 
-                   name="search" 
+            <input type="text"  
+                   name="search"  autocomplete="off"
                    value="<%= typeof search !== 'undefined' ? search : '' %>"
                    placeholder="Search doctors..." 
                    class="px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500">
@@ -53,7 +53,7 @@
                         <div class="flex space-x-2">
                             <% doctor.doctor_certifications.slice(0, 2).forEach(cert => { %>
                                 <span class="bg-primary-100 text-primary-800 text-xs px-2 py-1 rounded">
-                                    <%= cert.degree_level %>
+                                    <%= cert.title %>
                                 </span>
                             <% }); %>
                         </div>

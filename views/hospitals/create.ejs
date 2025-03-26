@@ -1,0 +1,139 @@
+<div class="max-w-4xl mx-auto bg-white rounded-xl shadow-md overflow-hidden">
+    <div class="p-8">
+        <h1 class="text-3xl font-bold text-gray-900 mb-8">Add New Hospital</h1>
+        
+        <form action="/hospitals/create" method="POST" class="space-y-6">
+            <div>
+                <label for="name" class="block text-sm font-medium text-gray-700">Hospital Name</label>
+                <input type="text" id="name" name="name" required
+                       class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500">
+            </div>
+
+            <div>
+                <label for="area_id" class="block text-sm font-medium text-gray-700">Location</label>
+                <select id="area_id" name="area_id" required
+                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500">
+                    <option value="">Select Location</option>
+                    <% areas.forEach(area => { %>
+                        <option value="<%= area.area_id %>">
+                            <%= area.name %>, <%= area.city.name %>, <%= area.city.country.name %>
+                        </option>
+                    <% }); %>
+                </select>
+            </div>
+
+            <div>
+                <label for="summary" class="block text-sm font-medium text-gray-700">Summary</label>
+                <textarea id="summary" name="summary" rows="4"
+                          class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500"></textarea>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <label for="emergency_status" class="block text-sm font-medium text-gray-700">Emergency Status</label>
+                    <select id="emergency_status" name="emergency_status"
+                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500">
+                        <option value="true">Available</option>
+                        <option value="false">Not Available</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label for="is_private" class="block text-sm font-medium text-gray-700">Hospital Type</label>
+                    <select id="is_private" name="is_private"
+                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500">
+                        <option value="false">Public</option>
+                        <option value="true">Private</option>
+                    </select>
+                </div>
+            </div>
+
+            <div>
+                <label for="address" class="block text-sm font-medium text-gray-700">Address</label>
+                <input type="text" id="address" name="address" required
+                       class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500">
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <label for="contact_email" class="block text-sm font-medium text-gray-700">Contact Email</label>
+                    <input type="email" id="contact_email" name="contact_email"
+                           class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500">
+                </div>
+
+                <div>
+                    <label for="website" class="block text-sm font-medium text-gray-700">Website</label>
+                    <input type="url" id="website" name="website"
+                           class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500">
+                </div>
+            </div>
+
+            <div class="phone-numbers-container">
+                <h3 class="text-lg font-medium text-gray-900 mb-4">Phone Numbers</h3>
+                <div id="phone-numbers" class="space-y-4">
+                    <div class="phone-entry flex items-center space-x-4">
+                        <input type="tel" name="phone_numbers[]" required placeholder="Enter phone number"
+                               class="flex-1 rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500">
+                    </div>
+                </div>
+                <button type="button" onclick="addPhoneNumber()"
+                        class="mt-4 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-primary-700 bg-primary-100 hover:bg-primary-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500">
+                    Add Another Phone Number
+                </button>
+            </div>
+
+            <div class="facilities-container">
+                <h3 class="text-lg font-medium text-gray-900 mb-4">Facilities</h3>
+                <div id="facilities" class="space-y-4">
+                    <div class="facility-entry flex items-center space-x-4">
+                        <input type="text" name="facilities[]" required placeholder="Enter facility name"
+                               class="flex-1 rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500">
+                    </div>
+                </div>
+                <button type="button" onclick="addFacility()"
+                        class="mt-4 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-primary-700 bg-primary-100 hover:bg-primary-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500">
+                    Add Another Facility
+                </button>
+            </div>
+
+            <div class="flex justify-end space-x-4">
+                <a href="/hospitals" class="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500">
+                    Cancel
+                </a>
+                <button type="submit" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-black hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500">
+                    Save Changes
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+function addPhoneNumber() {
+    const container = document.getElementById('phone-numbers');
+    const newPhone = document.createElement('div');
+    newPhone.className = 'phone-entry flex items-center space-x-4';
+    newPhone.innerHTML = `
+        <input type="tel" name="phone_numbers[]" required placeholder="Enter phone number"
+               class="flex-1 rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500">
+        <button type="button" onclick="this.parentElement.remove()" class="text-sm text-red-600 hover:text-red-800">
+            Remove
+        </button>
+    `;
+    container.appendChild(newPhone);
+}
+
+function addFacility() {
+    const container = document.getElementById('facilities');
+    const newFacility = document.createElement('div');
+    newFacility.className = 'facility-entry flex items-center space-x-4';
+    newFacility.innerHTML = `
+        <input type="text" name="facilities[]" required placeholder="Enter facility name"
+               class="flex-1 rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500">
+        <button type="button" onclick="this.parentElement.remove()" class="text-sm text-red-600 hover:text-red-800">
+            Remove
+        </button>
+    `;
+    container.appendChild(newFacility);
+}
+</script>

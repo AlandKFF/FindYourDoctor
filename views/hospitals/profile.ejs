@@ -1,13 +1,29 @@
 <div class="max-w-4xl mx-auto bg-white rounded-xl shadow-md overflow-hidden">
     <div class="p-8">
-        <div class="flex justify-between items-start">
+        <div class="flex justify-between items-center">
             <div>
                 <h1 class="text-3xl font-bold text-gray-900 mb-2"><%= hospital.name %></h1>
                 <p class="text-gray-600 mb-4"><%= hospital.summary %></p>
             </div>
-            <span class="<%= hospital.emergency_status ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' %> px-4 py-2 rounded-full text-sm font-medium">
-                <%= hospital.emergency_status ? 'Emergency Available' : 'No Emergency' %>
-            </span>
+            <div class="flex items-center space-x-4">
+                <!-- Emergency status badge -->
+                <span class="<%= hospital.emergency_status ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' %> px-4 py-2 rounded-full text-sm font-medium">
+                    <%= hospital.emergency_status ? 'Emergency Available' : 'No Emergency' %>
+                </span>
+                <!-- Edit button with background and icon -->
+                <a href="/hospitals/<%= hospital.hospital_id %>/edit" class="bg-blue-500 hover:bg-blue-600 text-white p-2 rounded-full">
+                    <!-- New edit icon (alternative pencil) -->
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M17.414 2.586a2 2 0 00-2.828 0L7 10.172V13h2.828l7.586-7.586a2 2 0 000-2.828z"/>
+                    </svg>
+                </a>
+                <!-- Create button -->
+                <a href="/hospitals/create" class="bg-blue-500 hover:bg-blue-600 text-white p-2 rounded-full">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z"/>
+                    </svg>
+                </a>
+            </div>
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mt-8">
