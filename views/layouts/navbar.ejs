@@ -14,8 +14,20 @@
             <div class="hidden md:flex items-center space-x-8">
                 <a href="/doctors" class="text-black hover:text-primary-200 transition-colors">Doctors</a>
                 <a href="/hospitals" class="text-black hover:text-primary-200 transition-colors">Hospitals</a>
-                <a href="/about" class="text-black hover:text-primary-200 transition-colors">about</a>
-                <a href="/contact" class="text-black hover:text-primary-200 transition-colors">contact</a>
+                <a href="/about" class="text-black hover:text-primary-200 transition-colors">About</a>
+                <a href="/contact" class="text-black hover:text-primary-200 transition-colors">Contact</a>
+                <% if (locals.loggedInUserId) { %>
+                    <a href="/auth/logout" class="text-black hover:text-primary-200 transition-colors">Logout</a>
+                    <a href="/users/getprofile" class="text-black hover:text-primary-200 transition-colors">profile</a>
+                    <% if(locals.isAdmin){ %>
+                        <a href="/users" class="text-black hover:text-primary-200 transition-colors">Users</a>
+                        <a href="/contact/reports" class="text-black hover:text-primary-200 transition-colors">reports
+                        <a href="/hospitals/requests" class="text-black hover:text-primary-200 transition-colors">request
+                        </a>
+                    <% } %>
+                <% } else { %>
+                    <a href="/auth/" class="text-black hover:text-primary-200 transition-colors">join us</a>
+                <% } %>
             </div>
 
             <!-- Mobile Menu Button -->
@@ -29,11 +41,22 @@
         </div>
 
         <!-- Mobile Menu -->
-        <div id="mobile-menu" class="hidden md:hidden flex-col space-y-4 mt-4">
+        <div id="mobile-menu" class="hidden md:hidden flex-col space-y-4 mt-4 pb-4">
             <a href="/doctors" class="block text-black hover:text-primary-200 transition-colors">Doctors</a>
             <a href="/hospitals" class="block text-black hover:text-primary-200 transition-colors">Hospitals</a>
-            <a href="/about" class="block text-black hover:text-primary-200 transition-colors">about</a>
-            <a href="/contact" class="block text-black hover:text-primary-200 transition-colors">contact</a>
+            <a href="/about" class="block text-black hover:text-primary-200 transition-colors">About</a>
+            <a href="/contact" class="block text-black hover:text-primary-200 transition-colors">Contact</a>
+            <% if (locals.loggedInUserId) { %>
+                <a href="/auth/logout" class="block text-black hover:text-primary-200 transition-colors">Logout</a>
+                <a href="/users/getprofile" class="block text-black hover:text-primary-200 transition-colors">Profile</a>
+                <% if(locals.isAdmin){ %>
+                    <a href="/users" class="block text-black hover:text-primary-200 transition-colors">Users</a>
+                    <a href="/contact/reports" class="block text-black hover:text-primary-200 transition-colors">Reports</a>
+                    <a href="/hospitals/requests" class="block text-black hover:text-primary-200 transition-colors">Requests</a>
+                <% } %>
+            <% } else { %>
+                <a href="/auth/" class="block text-black hover:text-primary-200 transition-colors">join us</a>
+            <% } %>
         </div>
     </div>
 </nav>

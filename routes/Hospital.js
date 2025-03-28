@@ -1,7 +1,8 @@
 const express = require('express');
 const router = express.Router();
-const { Hospital, Doctor, HospitalPhone, HospitalFacility, Area, City, Country, DoctorCertification } = require('../models');
+const { Hospital, Doctor, HospitalPhone, HospitalFacility, Area, City, Country, DoctorCertification, HospitalUser, User } = require('../models');
 const { Op } = require('sequelize');
+const { ensureAuthenticated, ensureStatus, ensureRole } = require('../middlewares/auth.js');
 
 router.get('/', async (req, res) => {
     try {
@@ -50,7 +51,7 @@ router.get('/', async (req, res) => {
     }
 });
 
-router.get('/create', async (req, res) => {
+router.get('/create', ensureAuthenticated, ensureStatus('accept'), async (req, res) => {
     try {
         const areas = await Area.findAll({
             include: [{
@@ -65,7 +66,7 @@ router.get('/create', async (req, res) => {
     }
 });
 
-router.post('/create', async (req, res) => {
+router.post('/create', ensureAuthenticated, ensureStatus('accept'), async (req, res) => {
     try {
         const {
             name,
@@ -116,7 +117,7 @@ router.post('/create', async (req, res) => {
     }
 });
 
-router.get('/:id/edit', async (req, res) => {
+router.get('/:id/edit', ensureAuthenticated, ensureStatus('accept'), async (req, res) => {
     try {
         const hospital = await Hospital.findByPk(req.params.id, {
             include: [
@@ -150,7 +151,7 @@ router.get('/:id/edit', async (req, res) => {
     }
 });
 
-router.post('/:id/edit', async (req, res) => {
+router.post('/:id/edit', ensureAuthenticated, ensureStatus('accept'), async (req, res) => {
     try {
         const hospital = await Hospital.findByPk(req.params.id);
         if (!hospital) {
@@ -212,10 +213,124 @@ router.post('/:id/edit', async (req, res) => {
     }
 });
 
+
+router.post('/:id/request', ensureAuthenticated, ensureStatus('accept'), async (req, res) => {
+    try {
+        const user_id = req.session.user.id; // Assuming user ID is stored in session
+        const hospital = await Hospital.findByPk(req.params.id);
+        if (!hospital) {
+            return res.status(404).json({ message: 'Hospital not found' });
+        }
+
+        // Check if the user already has a pending request
+        const existingRequest = await HospitalUser.findOne({
+            where: {
+                user_id,
+                status: 'pending'
+            }
+        });
+
+        if (existingRequest) {
+            return res.status(400).json({ message: 'You already have a pending request. Please wait for it to be processed before making another request.' });
+        }
+
+        console.log('Request body:', req.body);
+        console.log('User ID:', user_id);
+        console.log('Hospital ID:', hospital.hospital_id);
+
+        let { request_message, privacy_policy_agreement, terms_of_service_agreement } = req.body;
+        privacy_policy_agreement = privacy_policy_agreement == 'on' ? true : false;
+        terms_of_service_agreement = terms_of_service_agreement == 'on' ? true : false;
+
+        console.log('Request message:', request_message);
+        console.log('Privacy policy agreement:', privacy_policy_agreement);
+        console.log('Terms of service agreement:', terms_of_service_agreement);
+
+        const hospitalUser = await HospitalUser.create({
+            hospital_id: req.params.id,
+            user_id,
+            status: 'pending',
+            request_message,
+            privacy_policy_agreement,
+            terms_of_service_agreement,
+        });
+
+        console.log('Request sent to hospital:', hospitalUser);
+        res.redirect(`/users/getprofile`);
+    } catch (error) {
+        console.error('Error sending request:', error);
+        res.status(500).json({ message: 'Failed to send request' });
+    }
+});
+
+router.get('/requests', ensureAuthenticated, ensureStatus('accept'), ensureRole('admin'), async (req, res) => {
+    console.log("Fetching hospital users for admin view");
+    console.log('User session:', req.session.user); // Log the user session for debugging
+    console.log('User role:', req.session.user.role); // Log the user role for debugging
+    console.log('User status:', req.session.user.status); // Log the user status for debugging
+    console.log('User ID:', req.session.user.id); // Log the user ID for debugging
+    console.log('User email:', req.session.user.email); // Log the user email for debugging
+    console.log('User name:', req.session.user.name); // Log the user name for debugging
+    
+    try {
+        const hospitalUsers = await HospitalUser.findAll({
+            include: [
+                {
+                    model: Hospital,
+                    attributes: ['name']
+                },
+                {
+                    model: User,
+                    attributes: ['first_name', 'last_name', 'email']
+                }
+            ]
+        });
+        hospitalUsers.forEach(user => {
+            console.log('Hospital names:', user.hospital.name); // Log each hospital user for debugging
+        });
+        
+        
+        res.render('hospitals/requests', { hospitalUsers, title: 'Hospital Users' });
+    } catch (error) {
+        console.error('Error fetching hospital users:', error);
+        res.status(500).render('error', { message: 'Failed to fetch hospital users' });
+    }
+});
+
+router.post('/requests/:id/accept', ensureAuthenticated, ensureStatus('accept'), ensureRole('admin'), async (req, res) => {
+    try {
+        const hospitalUser = await HospitalUser.findByPk(req.params.id);
+        if (!hospitalUser) {
+            return res.status(404).json({ message: 'Request not found' });
+        }
+        await hospitalUser.update({ status: 'accept' });
+        console.log('Request accepted:', hospitalUser);
+        res.redirect('/hospitals/requests');
+    } catch (error) {
+        console.error('Error accepting request:', error);
+        res.status(500).json({ message: 'Failed to accept request' });
+    }
+});
+
+router.post('/requests/:id/reject', ensureAuthenticated, ensureStatus('accept'), ensureRole('admin'), async (req, res) => {
+    try {
+        const hospitalUser = await HospitalUser.findByPk(req.params.id);
+        if (!hospitalUser) {
+            return res.status(404).json({ message: 'Request not found' });
+        }
+        await hospitalUser.update({ status: 'reject' });
+        console.log('Request rejected:', hospitalUser);
+        res.redirect('/hospitals/requests');
+    } catch (error) {
+        console.error('Error rejecting request:', error);
+        res.status(500).json({ message: 'Failed to reject request' });
+    }
+});
+
 router.get('/:id', async (req, res) => {
     try {
         console.log('Fetching hospital with ID:', req.params.id);
-
+        
         const hospital = await Hospital.findByPk(req.params.id, {
             include: [
                 {
@@ -240,14 +355,14 @@ router.get('/:id', async (req, res) => {
                 }
             ]
         });
-
+        
         console.log('Hospital fetched:', hospital);
-
+        
         if (!hospital) {
             console.log('Hospital not found');
             return res.status(404).render('error', { message: 'Hospital not found' });
         }
-
+        
         console.log('Rendering hospital profile');
         res.render('hospitals/profile', { hospital, title: hospital.name });
     } catch (error) {

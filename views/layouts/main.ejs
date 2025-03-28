@@ -6,19 +6,32 @@
     <title> <%= title %> </title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/styles.css">
     <script src="/js/index.js"></script>
 
 
 </head>
 <body class="min-h-screen bg-gray-50">
-    <%- include('./navbar') %>
+      <% // Set the current path for active nav highlighting  
+     let path = '';
+     if (typeof originalUrl !== 'undefined' && typeof originalUrl === 'string') {
+       path = originalUrl;
+     } else if (typeof req !== 'undefined') {
+       path = req.originalUrl || req.url || '';
+     }
+  %>
+  <script>
+    console.log("below");
     
+    // console.log(<%-// JSON.stringify(locals) %>);
+  </script>
+  <%- include('./navbar', { path: path, locals: locals }) %>
     <main class="container mx-auto px-4 py-8">
         <%- body %>
     </main>
 
     <%- include('./footer') %>
 
-    <script src="/js/main.js"></script>
+    <!-- <script src="/js/main.js"></script> -->
 </body>
 </html>

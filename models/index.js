@@ -237,7 +237,121 @@ const DoctorHospital = sequelize.define('doctor_hospitals', {
     },
 }, { timestamps: false });
 
+// --- User Data ---
+const User = sequelize.define('users', {
+    user_id: {
+        type: DataTypes.INTEGER,
+        primaryKey: true,
+        autoIncrement: true,
+    },
+    first_name: {
+        type: DataTypes.STRING,
+        allowNull: false
+    },
+    last_name: {
+        type: DataTypes.STRING,
+        allowNull: false
+    },
+    role: {
+        type: DataTypes.ENUM('hospital manager', 'admin'),
+        allowNull: false
+    },
+    email: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        unique: true
+    },
+    password: {
+        type: DataTypes.STRING,
+        allowNull: false
+    },
+    status: {
+        type: DataTypes.ENUM('pending', 'accept', 'reject'),
+        allowNull: false,
+        defaultValue: 'pending'
+    },
+    phone_number: {
+        type: DataTypes.STRING,
+        allowNull: true
+    },
+    bio: {
+        type: DataTypes.TEXT,
+        allowNull: true
+    },
+}, { timestamps: true });
+
+// --- Hospital-User Relationship ---
+// --- Hospital-User Relationship ---
+const HospitalUser = sequelize.define('hospital_users', {
+    id: {
+        type: DataTypes.INTEGER,
+        primaryKey: true,
+        autoIncrement: true,
+    },
+    hospital_id: {
+        type: DataTypes.INTEGER,
+        references: {
+            model: Hospital,
+            key: 'hospital_id'
+        }
+    },
+    user_id: {
+        type: DataTypes.INTEGER,
+        references: {
+            model: User,
+            key: 'user_id'
+        }
+    },
+    request_message: {
+        type: DataTypes.STRING,
+        allowNull: true
+    },
+    status: {
+        type: DataTypes.ENUM('pending', 'accept', 'reject'),
+        allowNull: false,
+        defaultValue: 'pending'
+    },
+    privacy_policy_agreement: {
+        type: DataTypes.BOOLEAN,
+        defaultValue: false
+    },
+    terms_of_service_agreement: {
+        type: DataTypes.BOOLEAN,
+        defaultValue: false
+    },
+    created_at: {
+        type: DataTypes.DATE,
+        defaultValue: DataTypes.NOW
+    },
+}, { timestamps: false });
+
+const ContactReports = sequelize.define('contact_reports', {
+    report_id: {
+        type: DataTypes.INTEGER,
+        primaryKey: true,
+        autoIncrement: true
+    },
+    name: {
+        type: DataTypes.STRING,
+        allowNull: false
+    },
+    contact_info: {
+        type: DataTypes.STRING,
+        allowNull: false
+    },
+    message: {
+        type: DataTypes.TEXT,
+        allowNull: false
+    },
+    created_at: {
+        type: DataTypes.DATE,
+        defaultValue: DataTypes.NOW
+    }
+}, { timestamps: false });
+
 // --- Associations ---
+HospitalUser.belongsTo(Hospital, { foreignKey: 'hospital_id' });
+HospitalUser.belongsTo(User, { foreignKey: 'user_id' });
 
 // Geographic associations
 Country.hasMany(City, { foreignKey: 'country_id' });
@@ -275,5 +389,8 @@ module.exports = {
     HospitalFacility,
     Doctor,
     DoctorCertification,
-    DoctorHospital
+    DoctorHospital,
+    User,
+    HospitalUser,
+    ContactReports
 };

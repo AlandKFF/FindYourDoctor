@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const { Doctor, DoctorCertification, Hospital, Area, City, Country } = require('../models');
 const { Op } = require('sequelize');
+const { ensureAuthenticated, ensureStatus } = require('../middlewares/auth');
 
 router.get('/', async (req, res) => {
     try {
@@ -46,7 +47,7 @@ router.get('/', async (req, res) => {
     }
 });
 
-router.get('/create', async (req, res) => {
+router.get('/create', ensureAuthenticated, ensureStatus('accept'), async (req, res) => {
     try {
         const hospitals = await Hospital.findAll({
             include: [{
@@ -64,7 +65,7 @@ router.get('/create', async (req, res) => {
     }
 });
 
-router.post('/create', async (req, res) => {
+router.post('/create', ensureAuthenticated, ensureStatus('accept'), async (req, res) => {
     try {
         const {
             first_name,
@@ -104,7 +105,7 @@ router.post('/create', async (req, res) => {
     }
 });
 
-router.get('/:id/edit', async (req, res) => {
+router.get('/:id/edit',ensureAuthenticated, ensureStatus('accept'), async (req, res) => {
     try {
         const doctor = await Doctor.findByPk(req.params.id, {
             include: [
@@ -137,7 +138,7 @@ router.get('/:id/edit', async (req, res) => {
     }
 });
 
-router.post('/:id/edit', async (req, res) => {
+router.post('/:id/edit', ensureAuthenticated, ensureStatus('accept'), async (req, res) => {
     try {
         const doctor = await Doctor.findByPk(req.params.id);
         if (!doctor) {

@@ -1,0 +1,85 @@
+<div class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+  <div class="px-4 sm:px-0">
+    <h2 class="text-2xl font-semibold text-gray-900">User Management</h2>
+    <p class="mt-2 text-sm text-gray-700">
+      Manage user accounts and their status
+    </p>
+  </div>
+
+  <div class="mt-8 flex flex-col">
+    <div class="-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
+      <div class="py-2 align-middle inline-block min-w-full sm:px-6 lg:px-8">
+        <div class="shadow overflow-hidden border-b border-gray-200 sm:rounded-lg">
+          <table class="min-w-full divide-y divide-gray-200">
+            <thead class="bg-gray-50">
+              <tr>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Role</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
+                <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+              </tr>
+            </thead>
+            <tbody class="bg-white divide-y divide-gray-200">
+              <% users.forEach(user => { %>
+                <tr>
+                  <td class="px-6 py-4 whitespace-nowrap">
+                    <div class="text-sm font-medium text-gray-900 cursor-pointer" onclick="window.location.href='/users/<%= user.user_id %>'">
+                      <%= user.first_name %> <%= user.last_name %>
+                    </div>
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap">
+                    <div class="text-sm text-gray-900"><%= user.role %></div>
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap">
+                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full 
+                      <%= user.status === 'accept' ? 'bg-green-100 text-green-800' : 
+                          user.status === 'pending' ? 'bg-yellow-100 text-yellow-800' : 
+                          'bg-red-100 text-red-800' %>">
+                      <%= user.status %>
+                    </span>
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    <%= user.email %>
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                    <div class="flex space-x-2">
+                      <% if(user.status === 'pending') { %>
+                        <form action="/users/<%= user.user_id %>/status" method="POST">
+                          <input type="hidden" name="status" value="accept">
+                          <button type="submit" class="px-3 py-1 rounded bg-green-500 text-white hover:bg-green-600 focus:outline-none">
+                            Accept
+                          </button>
+                        </form>
+                        <form action="/users/<%= user.user_id %>/status" method="POST">
+                          <input type="hidden" name="status" value="reject">
+                          <button type="submit" class="px-3 py-1 rounded bg-red-500 text-white hover:bg-red-600 focus:outline-none">
+                            Reject
+                          </button>
+                        </form>
+                      <% } else if(user.status === 'accept') { %>
+                        <form action="/users/<%= user.user_id %>/status" method="POST">
+                          <input type="hidden" name="status" value="reject">
+                          <button type="submit" class="px-3 py-1 rounded bg-red-500 text-white hover:bg-red-600 focus:outline-none">
+                            Reject
+                          </button>
+                        </form>
+                      <% } else if(user.status === 'reject') { %>
+                        <form action="/users/<%= user.user_id %>/status" method="POST">
+                          <input type="hidden" name="status" value="accept">
+                          <button type="submit" class="px-3 py-1 rounded bg-green-500 text-white hover:bg-green-600 focus:outline-none">
+                            Accept
+                          </button>
+                        </form>
+                      <% } %>
+                    </div>
+                  </td>
+                </tr>
+              <% }); %>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
