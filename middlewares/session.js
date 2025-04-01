@@ -1,3 +1,5 @@
+// session.js
+
 const session = require('express-session');
 const { sequelize } = require('../models'); // adjust path as needed
 const SequelizeStore = require('connect-session-sequelize')(session.Store);
@@ -12,13 +14,21 @@ store.sync().then(() => {
   console.error('Failed to sync session store:', err);
 });
 
+// Session middleware configuration
 const sessionMiddleware = session({
   secret: process.env.SESSION_SECRET || 'mySecretKey',
   store: store,
   resave: false,
   saveUninitialized: false,
+  cookie: {
+    maxAge: 1000 * 60 * 60 * 24 * 7, // 1 week
+    // secure: process.env.NODE_ENV === 'production', // Use secure cookies in production
+    // httpOnly: true, // Prevent client-side JavaScript from accessing the cookie
+    // sameSite: 'strict', // CSRF protection
+  },
 });
 
+// Middleware to set loggedInUserId in response locals
 const setLoggedInUser = (req, res, next) => {
   try {
     console.log('Setting loggedInUserId middleware called.');
@@ -28,7 +38,6 @@ const setLoggedInUser = (req, res, next) => {
     } else {
       console.log('No user found in session.');
     }
-    // console.log('Session ID:', req.sessionID); // Log the session ID for debugging
     if (req.session && req.session.user && req.session.user.id) {
       console.log('User ID from session:', req.session.user.id);
       res.locals.loggedInUserId = req.session.user.id;
@@ -41,20 +50,19 @@ const setLoggedInUser = (req, res, next) => {
     console.error('Error in setLoggedInUser middleware:', error);
     res.locals.loggedInUserId = null;
   }
-    next();
-}
+  next();
+};
 
+// Middleware to ensure the user is an admin
 const ensureAdmin = (req, res, next) => {
   if (req.session && req.session.user && req.session.user.role === 'admin' && req.session.user.status === 'accept') {
     console.log('User is an admin:', req.session.user.email);
-    // Optionally, you can set a flag in locals to indicate admin status
-    res.locals.isAdmin = true; 
-    // req.locals.ensureAdmin = true;
+    res.locals.isAdmin = true;
     console.log('User is an admin. Proceeding to next middleware.');
     return next();
   }
   console.log('User is not an admin. Redirecting to login.');
-  res.locals.isAdmin = false; // Set isAdmin to false if not an admin 
+  res.locals.isAdmin = false;
   return next();
 };
 

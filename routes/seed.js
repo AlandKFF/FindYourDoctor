@@ -36,8 +36,8 @@ async function seedDatabase() {
     // 3. Insert Areas: each city gets 3 areas (one named "Central")
     const areasData = [
       { name: 'Central', city_id: cities[0].city_id },
-      { name: 'Area Sulaimani 1', city_id: cities[0].city_id },
-      { name: 'Area Sulaimani 2', city_id: cities[0].city_id },
+      { name: 'Piramagrun', city_id: cities[0].city_id },
+      { name: 'Arbat', city_id: cities[0].city_id },
       { name: 'Central', city_id: cities[1].city_id },
       { name: 'Area Hawler 1', city_id: cities[1].city_id },
       { name: 'Area Hawler 2', city_id: cities[1].city_id },
@@ -55,15 +55,15 @@ async function seedDatabase() {
 
     // 4. Insert Hospitals: each city gets 2 hospitals
     const hospitalsData = [
-      { area_id: areas[0].area_id, name: 'Shar', summary: 'Leading hospital in Sulaimani Central.', emergency_status: true, address: 'Street 1, Sulaimani', contact_email: 'contact@sulaimaniA.com', website: 'http://sulaimaniA.com', is_private: false, image_url: 'https://i.pinimg.com/474x/32/26/fa/3226fae8c2fd31e1c49f441c36ed100c.jpg' },
-      { area_id: areas[1].area_id, name: 'Hospital Sulaimani B', summary: 'Quality care in Sulaimani.', emergency_status: true, address: 'Street 2, Sulaimani', contact_email: 'contact@sulaimaniB.com', website: 'http://sulaimaniB.com', is_private: false, image_url: 'https://i.pinimg.com/474x/c9/96/2f/c9962fdc232fd936824711168e3e0e51.jpg' },
-      { area_id: areas[2].area_id, name: 'Hospital Hawler A', summary: 'Top hospital in Hawler Central.', emergency_status: true, address: 'Street 1, Hawler', contact_email: 'contact@hawlerA.com', website: 'http://hawlerA.com', is_private: false, image_url: 'https://i.pinimg.com/474x/23/a3/fc/23a3fcb132125c3020ff93dbff2626ed.jpg' },
-      { area_id: areas[3].area_id, name: 'Hospital Dhok A', summary: 'Leading hospital in Dhok Central.', emergency_status: false, address: 'Street 1, Dhok', contact_email: 'contact@dhokA.com', website: 'http://dhokA.com', is_private: false, image_url: 'https://i.pinimg.com/474x/48/96/6a/48966a606e239ea04f91ee86d5c7d480.jpg' },
-      { area_id: areas[4].area_id, name: 'Hospital Dhok B', summary: 'Quality care in Dhok.', emergency_status: true, address: 'Street 2, Dhok', contact_email: 'contact@dhokB.com', website: 'http://dhokB.com', is_private: false, image_url: 'https://i.pinimg.com/474x/bc/c0/13/bcc013aa69420dc0f628c713a8e27e78.jpg' },
-      { area_id: areas[5].area_id, name: 'Hospital Karkuk A', summary: 'Top hospital in Karkuk Central.', emergency_status: true, address: 'Street 1, Karkuk', contact_email: 'contact@karkukA.com', website: 'http://karkukA.com', is_private: false, image_url: 'https://i.pinimg.com/474x/25/ca/d0/25cad068376984dd3329f03405196bf0.jpg' },
-      { area_id: areas[6].area_id, name: 'Hospital Karkuk B', summary: 'Quality care in Karkuk.', emergency_status: true, address: 'Street 2, Karkuk', contact_email: 'contact@karkukB.com', website: 'http://karkukB.com', is_private: false, image_url: 'https://i.pinimg.com/474x/33/0a/08/330a08acb77fefab7817660d35c246c5.jpg' },
-      { area_id: areas[7].area_id, name: 'Hospital Halabja A', summary: 'Leading hospital in Halabja Central.', emergency_status: false, address: 'Street 1, Halabja', contact_email: 'contact@halabjaA.com', website: 'http://halabjaA.com', is_private: false, image_url: 'https://i.pinimg.com/474x/79/ec/5a/79ec5aca95fb7d4c90aba31e2290d2c7.jpg' },
-      { area_id: areas[8].area_id, name: 'Hospital Halabja B', summary: 'Quality service in Halabja.', emergency_status: true, address: 'Street 2, Halabja', contact_email: 'contact@halabjaB.com', website: 'http://halabjaB.com', is_private: false, image_url: 'https://i.pinimg.com/474x/d2/e8/a3/d2e8a392f88fa4e7feba3efa251108ed.jpg' }
+      { area_id: areas[0].area_id, name: 'Shar', summary: 'Leading hospital in Sulaimani Central.', emergency_status: true, address: 'Shar Hospital, Malik Mahmud Ring Road, Sulaymaniyah, KRG, 46001', contact_email: 'contact@sulaimaniA.com', website: 'http://sulaimaniA.com', is_private: false, image_url: 'https://i.pinimg.com/474x/32/26/fa/3226fae8c2fd31e1c49f441c36ed100c.jpg', status:"active" },
+      { area_id: areas[1].area_id, name: 'Bakhshin', summary: 'Quality care in Sulaimani.', emergency_status: true, address: 'Baxshin Hospital، Iraq/As sulaimanya Malik Mahmood Ring Road، 46001', contact_email: 'contact@sulaimaniB.com', website: 'http://sulaimaniB.com', is_private: false, image_url: 'https://i.pinimg.com/474x/c9/96/2f/c9962fdc232fd936824711168e3e0e51.jpg', status:"active" },
+      { area_id: areas[2].area_id, name: 'Faruq', summary: 'Top hospital in Hawler Central.', emergency_status: true, address: 'Faruk Medical City، 24 30 suleimany, Sulaymaniyah, 46001', contact_email: 'contact@hawlerA.com', website: 'http://hawlerA.com', is_private: false, image_url: 'https://i.pinimg.com/474x/23/a3/fc/23a3fcb132125c3020ff93dbff2626ed.jpg', status:"active" },
+      { area_id: areas[3].area_id, name: 'Hospital Dhok A', summary: 'Leading hospital in Dhok Central.', emergency_status: false, address: 'Street 1, Dhok', contact_email: 'contact@dhokA.com', website: 'http://dhokA.com', is_private: false, image_url: 'https://i.pinimg.com/474x/48/96/6a/48966a606e239ea04f91ee86d5c7d480.jpg', status:"active" },
+      { area_id: areas[4].area_id, name: 'Hospital Dhok B', summary: 'Quality care in Dhok.', emergency_status: true, address: 'Street 2, Dhok', contact_email: 'contact@dhokB.com', website: 'http://dhokB.com', is_private: false, image_url: 'https://i.pinimg.com/474x/bc/c0/13/bcc013aa69420dc0f628c713a8e27e78.jpg', status:"active" },
+      { area_id: areas[5].area_id, name: 'Hospital Karkuk A', summary: 'Top hospital in Karkuk Central.', emergency_status: true, address: 'Street 1, Karkuk', contact_email: 'contact@karkukA.com', website: 'http://karkukA.com', is_private: false, image_url: 'https://i.pinimg.com/474x/25/ca/d0/25cad068376984dd3329f03405196bf0.jpg', status:"active" },
+      { area_id: areas[6].area_id, name: 'Hospital Karkuk B', summary: 'Quality care in Karkuk.', emergency_status: true, address: 'Street 2, Karkuk', contact_email: 'contact@karkukB.com', website: 'http://karkukB.com', is_private: false, image_url: 'https://i.pinimg.com/474x/33/0a/08/330a08acb77fefab7817660d35c246c5.jpg', status:"active" },
+      { area_id: areas[7].area_id, name: 'Hospital Halabja A', summary: 'Leading hospital in Halabja Central.', emergency_status: false, address: 'Street 1, Halabja', contact_email: 'contact@halabjaA.com', website: 'http://halabjaA.com', is_private: false, image_url: 'https://i.pinimg.com/474x/79/ec/5a/79ec5aca95fb7d4c90aba31e2290d2c7.jpg', status:"active" },
+      { area_id: areas[8].area_id, name: 'Hospital Halabja B', summary: 'Quality service in Halabja.', emergency_status: true, address: 'Street 2, Halabja', contact_email: 'contact@halabjaB.com', website: 'http://halabjaB.com', is_private: false, image_url: 'https://i.pinimg.com/474x/d2/e8/a3/d2e8a392f88fa4e7feba3efa251108ed.jpg', status:"active" },
     ];
  
     const hospitals = await Hospital.bulkCreate(hospitalsData);

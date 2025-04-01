@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const bcrypt = require('bcryptjs');
 const { User } = require('../models/');
-const { ensureAuthenticated, ensureRole } = require('../middlewares/auth.js');
+const { ensureAuthenticated } = require('../middlewares/auth.js');
 
 router.get('/', async (req, res) => {
     if (req.session.user) {

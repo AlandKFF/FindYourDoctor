@@ -3,14 +3,13 @@ const router = express.Router();
 const { ContactReports } = require('../models'); 
 const { ensureAuthenticated, ensureStatus, ensureRole } = require('../middlewares/auth.js');
 
-
 router.get('/', (req, res) => {
     res.render('contact', { title: 'Contact' });
 });
 
 // Route to handle contact form submission
 router.post('/', (req, res) => {
-    const { name, contact_info, message,  } = req.body;
+    const { name, contact_info, message } = req.body;
     console.log(req.body);
     
     // Validate the input
@@ -33,7 +32,7 @@ router.post('/', (req, res) => {
     res.redirect('/');
 });
 
-router.get('/reports', ensureAuthenticated, ensureStatus('accept') , ensureRole('admin'), async (req, res) => {
+router.get('/reports', ensureAuthenticated, ensureStatus('accept'), ensureRole('admin'), async (req, res) => {
     // res.send('Contact Reports Page');
     try {
         const reports = await ContactReports.findAll({

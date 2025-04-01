@@ -1,3 +1,5 @@
+// authentication.js
+
 // Middleware to check if user is authenticated
 module.exports.ensureAuthenticated = (req, res, next) => {
   console.log('ensureAuthenticated middleware triggered');
@@ -28,6 +30,7 @@ module.exports.ensureRole = (role) => {
   };
 };
 
+// Middleware to check if the user has a specific status
 module.exports.ensureStatus = (status) => {
   return (req, res, next) => {
     if (req.session && req.session.user && req.session.user.status === status) {
@@ -39,5 +42,16 @@ module.exports.ensureStatus = (status) => {
     // Forbidden if status doesn't match
     res.status(403).send('Forbidden: Status does not match');
   };
-}
+};
 
+// Middleware to check if the user is admin (by role)
+// Note: This is similar to ensureRole, consider consolidating if needed.
+module.exports.ensureAdmin = (role) => {
+  return (req, res, next) => {
+    if (req.session && req.session.user && req.session.user.role === role) {
+      return next();
+    }
+    // Forbidden if role doesn't match
+    res.status(403).send('Forbidden: Insufficient permissions');
+  };
+};

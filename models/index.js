@@ -117,6 +117,11 @@ const Hospital = sequelize.define('hospitals', {
     image_url: {
         type: DataTypes.STRING
     },
+    status: {
+        type: DataTypes.ENUM('pending', 'active', 'inactive'),
+        allowNull: false,
+        defaultValue: 'pending'
+    },
 }, { timestamps: false });
 
 const HospitalPhone = sequelize.define('hospital_phones', {

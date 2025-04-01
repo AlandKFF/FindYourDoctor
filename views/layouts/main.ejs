@@ -20,12 +20,40 @@
        path = req.originalUrl || req.url || '';
      }
   %>
-  <script>
-    console.log("below");
-    
-    // console.log(<%-// JSON.stringify(locals) %>);
-  </script>
+
   <%- include('./navbar', { path: path, locals: locals }) %>
+
+  <% 
+  let error = 'error';
+  // let success = 'success';
+  // let warning = 'warning';
+  if (typeof locals !== 'undefined') {
+    error = locals.error || '';
+    success = locals.success || '';
+    warning = locals.warning || '';
+  } else if (typeof req !== 'undefined' && typeof req.session !== 'undefined') {
+    error = req.session.error || '';
+    success = req.session.success || '';
+    warning = req.session.warning || '';
+
+    // Clear the session messages after displaying them
+    req.session.error = null;
+    req.session.success = null;
+    req.session.warning = null;
+  }
+  %>
+
+  <% if(error) { %>
+    <%- include('./error') %>
+  <% } %>
+  <% if(success) { %>
+    <%- include('./success') %>
+  <% } %>
+  <% if(warning) { %>
+    <%- include('./warning') %>
+  <% } %>
+
+
     <main class="container mx-auto px-4 py-8">
         <%- body %>
     </main>

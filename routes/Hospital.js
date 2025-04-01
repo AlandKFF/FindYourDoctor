@@ -67,6 +67,9 @@ router.get('/create', ensureAuthenticated, ensureStatus('accept'), async (req, r
 });
 
 router.post('/create', ensureAuthenticated, ensureStatus('accept'), async (req, res) => {
+    console.log("Initiating hospital creation with data:", req.body);
+    console.log("User session data:", req.session.user);
+
     try {
         const {
             name,
@@ -78,9 +81,46 @@ router.post('/create', ensureAuthenticated, ensureStatus('accept'), async (req, 
             website,
             is_private,
             phone_numbers,
-            facilities
+            facilities,
         } = req.body;
 
+        const user_id = req.session.user.id;
+        const user_role = req.session.user.role;
+        console.log("User ID:", user_id);
+        console.log("User role:", user_role);
+        // For non-admin users, ensure they don't already have a pending hospital.
+        if (user_role !== 'admin') {
+            const existingPendingHospital = await HospitalUser.findOne({
+                where: {
+                    user_id,
+                    status: 'pending'
+                },
+                // include: [Hospital]
+            });
+
+            if (existingPendingHospital) {
+                console.log(`User ${user_id} already has a pending hospital.`);
+                return res.status(400).render('error', { 
+                    message: 'You already have a pending hospital. Please wait for it to be processed before creating another.' 
+                });
+            }
+        }
+        // For admin users, ensure no duplicate hospital exists in the selected area.
+        if (user_role === 'admin') {
+            const existingHospital = await Hospital.findOne({
+                where: { name, area_id }
+            });
+
+            if (existingHospital) {
+                console.log(`Duplicate hospital detected for admin user ${user_id}.`);
+                return res.status(400).render('error', { 
+                    message: 'A hospital with this name already exists in the selected area.' 
+                });
+            }
+        }
+
+        // Create the hospital with the appropriate status.
+        const hospitalStatus = user_role === 'admin' ? 'active' : 'pending';
         const hospital = await Hospital.create({
             name,
             area_id,
@@ -89,9 +129,13 @@ router.post('/create', ensureAuthenticated, ensureStatus('accept'), async (req, 
             address,
             contact_email,
             website,
-            is_private: is_private === 'true'
+            is_private: is_private === 'true',
+            status: hospitalStatus,
         });
 
+        console.log(`Hospital created with ID ${hospital.hospital_id} and status ${hospitalStatus}.`);
+
+        // Create associated phone numbers.
         if (phone_numbers && Array.isArray(phone_numbers)) {
             await Promise.all(phone_numbers.map(phone =>
                 HospitalPhone.create({
@@ -99,8 +143,10 @@ router.post('/create', ensureAuthenticated, ensureStatus('accept'), async (req, 
                     phone_number: phone
                 })
             ));
+            console.log("Phone numbers added successfully.");
         }
 
+        // Create associated facilities.
         if (facilities && Array.isArray(facilities)) {
             await Promise.all(facilities.map(facility =>
                 HospitalFacility.create({
@@ -108,14 +154,25 @@ router.post('/create', ensureAuthenticated, ensureStatus('accept'), async (req, 
                     facility_name: facility
                 })
             ));
+            console.log("Facilities added successfully.");
         }
+
+        // Link the user to the hospital with the correct status.
+        const userHospitalStatus = user_role === 'admin' ? 'accept' : 'pending';
+        await HospitalUser.create({
+            hospital_id: hospital.hospital_id,
+            user_id,
+            status: userHospitalStatus
+        });
+        console.log(`HospitalUser record created for user ${user_id} with status ${userHospitalStatus}.`);
 
         res.redirect(`/hospitals/${hospital.hospital_id}`);
     } catch (error) {
         console.error('Error creating hospital:', error);
-        res.status(500).render('error', { message: 'Failed to create hospital' });
+        res.status(500).render('error', { message: 'Failed to create hospital. Please try again later.' });
     }
 });
+
 
 router.get('/:id/edit', ensureAuthenticated, ensureStatus('accept'), async (req, res) => {
     try {
@@ -217,12 +274,18 @@ router.post('/:id/edit', ensureAuthenticated, ensureStatus('accept'), async (req
 router.post('/:id/request', ensureAuthenticated, ensureStatus('accept'), async (req, res) => {
     try {
         const user_id = req.session.user.id; // Assuming user ID is stored in session
+        const user_role = req.session.user.role; // Assuming user role is stored in session
+        console.log("User ID:", user_id);
+        console.log("User role:", user_role);
         const hospital = await Hospital.findByPk(req.params.id);
         if (!hospital) {
             return res.status(404).json({ message: 'Hospital not found' });
         }
 
         // Check if the user already has a pending request
+        if(user_role === 'admin') {
+            return res.status(403).json({ message: 'Admins cannot send requests' });
+        }
         const existingRequest = await HospitalUser.findOne({
             where: {
                 user_id,
@@ -241,7 +304,9 @@ router.post('/:id/request', ensureAuthenticated, ensureStatus('accept'), async (
         let { request_message, privacy_policy_agreement, terms_of_service_agreement } = req.body;
         privacy_policy_agreement = privacy_policy_agreement == 'on' ? true : false;
         terms_of_service_agreement = terms_of_service_agreement == 'on' ? true : false;
-
+        if(!privacy_policy_agreement || !terms_of_service_agreement) {
+            return res.status(400).json({ message: 'You must agree to the privacy policy and terms of service.' });
+        }
         console.log('Request message:', request_message);
         console.log('Privacy policy agreement:', privacy_policy_agreement);
         console.log('Terms of service agreement:', terms_of_service_agreement);
@@ -324,6 +389,80 @@ router.post('/requests/:id/reject', ensureAuthenticated, ensureStatus('accept'),
     } catch (error) {
         console.error('Error rejecting request:', error);
         res.status(500).json({ message: 'Failed to reject request' });
+    }
+});
+
+router.get('/newhospitals', ensureAuthenticated, ensureStatus('accept'), ensureRole('admin') ,async (req, res) => {
+    try {
+        const areas = await Area.findAll({
+            include: [{
+                model: City,
+                include: [Country]
+            }]
+        });
+        const new_hospitals = await Hospital.findAll({
+            where: { status: 'pending' },
+            include: [
+                {
+                    model: Area,
+                    include: [{
+                        model: City,
+                        include: [Country]
+                    }]
+                },
+                {
+                    model: HospitalPhone
+                },
+                {
+                    model: HospitalFacility
+                },
+                {
+                    model: Doctor,
+                    through: { attributes: [] }
+                }
+            ]
+        });
+        console.log('New hospitals:', new_hospitals);
+        res.render('hospitals/newHospital', { areas, title: 'New Hospital', new_hospitals });
+    } catch (error) {
+        console.error('Error loading new hospital form:', error);
+        res.status(500).render('error', { message: 'Failed to load new hospital form' });
+    }
+});
+
+router.post('/:id/approvenewhospital', ensureAuthenticated, ensureStatus('accept'), ensureRole('admin'), async (req, res) => {
+    try {
+        console.log("params:", req.params);
+        console.log('Approving new hospital with ID:', req.params.id);
+        const hospital = await Hospital.findByPk(req.params.id);
+        console.log('hospital to be accepted:', hospital);
+        
+        if (!hospital) {
+            return res.status(404).json({ message: 'Hospital not found' });
+        }
+        await Hospital.update({ status: 'active' }, { where: { hospital_id: req.params.id } });
+        console.log('New hospital approved:', hospital);
+        res.redirect('/hospitals/newhospitals');
+    } catch (error) {
+        console.error('Error approving new hospital:', error);
+        res.status(500).json({ message: 'Failed to approve new hospital' });
+    }
+});
+
+router.post('/:id/rejectnewhospital', ensureAuthenticated, ensureStatus('accept'), ensureRole('admin'), async (req, res) => {
+    try {
+        console.log('Rejecting new hospital with ID:', req.params.id);
+        
+        const hospital = await Hospital.findByPk(req.params.id);
+        if (!hospital) {
+            return res.status(404).json({ message: 'Hospital not found' });
+        }
+        await hospital.update({ status: 'inactive' }, { where: { hospital_id: req.params.id } });
+        console.log('New hospital rejected:', hospital);
+        res.redirect('/hospitals/newhospitals');
+    } catch (error) {
+        console.error('Error rejecting new hospital:', error);
+        res.status(500).json({ message: 'Failed to reject new hospital' });
     }
 });
 

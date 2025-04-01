@@ -1,19 +1,25 @@
 <div class="space-y-8">
     <div class="flex justify-between items-center">
         <h1 class="text-3xl font-bold text-gray-900">Find Hospitals</h1>
-<form id="searchForm" action="/hospitals" method="GET" class="relative flex space-x-4">
-  <input type="text" 
-         name="search" 
-         value="<%= typeof search !== 'undefined' ? search : '' %>"
-         placeholder="Search hospitals..." 
-         class="px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500">
-</form>
-<!-- <div id="results" class="results-container"></div> -->
+        <form id="searchForm" action="/hospitals" method="GET" class="relative flex space-x-4">
+            <div class="relative">
+                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <svg class="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                    </svg>
+                </div>
+                <input type="text" 
+                       name="search" 
+                       value="<%= typeof search !== 'undefined' ? search : '' %>"
+                       placeholder="Search hospitals..." 
+                       class="pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 w-64">
+            </div>
+        </form>
     </div>
 
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         <% hospitals.forEach(hospital => { %>
-            <div class="bg-white rounded-lg shadow-md overflow-hidden">
+            <div class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300">
                 <img src="<%= hospital.image_url || 'https://images.unsplash.com/photo-1632833239869-a37e3a5806d2?w=800&auto=format&fit=crop&q=60&ixlib=rb-4.0.3' %>" 
                      alt="<%= hospital.name %>"
                      class="w-full h-48 object-cover">
@@ -21,24 +27,37 @@
                     <h3 class="text-xl font-semibold text-gray-900 mb-2">
                         <%= hospital.name %>
                     </h3>
-                    <p class="text-gray-600 mb-4">
+                    <p class="text-gray-600 mb-4 line-clamp-2">
                         <%= hospital.summary %>
                     </p>
                     <div class="flex items-center text-sm text-gray-500 mb-4">
-                        <svg class="h-5 w-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
-                        </svg>
-                        <%= hospital.area?.name || 'Unknown Area' %>,
-                        <%= hospital.area?.city?.name || 'Unknown City' %>,
-                        <%= hospital.area?.city?.country?.name || 'Unknown Country' %>
+                        <div class="flex items-center">
+                            <svg class="h-5 w-5 text-gray-400 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+                            </svg>
+                            <span><%= hospital.area?.name || 'Unknown Area' %>,
+                            <%= hospital.area?.city?.name || 'Unknown City' %>,
+                            <%= hospital.area?.city?.country?.name || 'Unknown Country' %></span>
+                        </div>
+                        <button class="get-direction ml-4 flex items-center text-primary-600 hover:text-primary-800"
+                                data-destination="<%= hospital.address %>"
+                                title="Get directions">
+                            <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"/>
+                            </svg>
+                            <span class="ml-1">Directions</span>
+                        </button>
                     </div>
                     <div class="flex items-center justify-between">
                         <span class="<%= hospital.emergency_status ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' %> px-3 py-1 rounded-full text-sm font-medium">
                             <%= hospital.emergency_status ? 'Emergency Available' : 'No Emergency' %>
                         </span>
-                        <a href="/hospitals/<%= hospital.hospital_id %>" class="text-primary-600 hover:text-primary-800 font-medium">
-                            View Details →
+                        <a href="/hospitals/<%= hospital.hospital_id %>" class="text-primary-600 hover:text-primary-800 font-medium flex items-center">
+                            View Details
+                            <svg class="h-5 w-5 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                            </svg>
                         </a>
                     </div>
                 </div>
