@@ -12,21 +12,19 @@
 
 </head>
 <body class="min-h-screen bg-gray-50">
-      <% // Set the current path for active nav highlighting  
-     let path = '';
-     if (typeof originalUrl !== 'undefined' && typeof originalUrl === 'string') {
-       path = originalUrl;
-     } else if (typeof req !== 'undefined') {
-       path = req.originalUrl || req.url || '';
+    <% // Set the current path for active nav highlighting  
+     let currentPath = '';
+     if (typeof req !== 'undefined') {
+       currentPath = req.originalUrl || req.url || '';
      }
-  %>
+    %>
 
-  <%- include('./navbar', { path: path, locals: locals }) %>
+  <%- include('./navbar', { currentPath: currentPath, locals: locals }) %>
 
   <% 
   let error = 'error';
-  // let success = 'success';
-  // let warning = 'warning';
+  let success = 'success';
+  let warning = 'warning';
   if (typeof locals !== 'undefined') {
     error = locals.error || '';
     success = locals.success || '';

@@ -10,3 +10,22 @@
     </button>
   </div>
 </div>
+
+<script>
+  // Automatically remove the error message after 4 seconds
+  setTimeout(() => {
+    const errorAlert = document.querySelector('.fixed');
+    if (errorAlert) {
+      errorAlert.remove();
+    }
+  }, 3000);
+</script>
+
+<style>
+  /* Position the error message at the bottom-right corner */
+  .fixed {
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+  }
+</style>

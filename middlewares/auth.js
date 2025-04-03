@@ -19,17 +19,6 @@ module.exports.ensureAuthenticated = (req, res, next) => {
   res.redirect('/auth/');
 };
 
-// Middleware to check if the user has a specific role
-module.exports.ensureRole = (role) => {
-  return (req, res, next) => {
-    if (req.session && req.session.user && req.session.user.role === role) {
-      return next();
-    }
-    // Forbidden if role doesn't match
-    res.status(403).send('Forbidden: Insufficient permissions');
-  };
-};
-
 // Middleware to check if the user has a specific status
 module.exports.ensureStatus = (status) => {
   return (req, res, next) => {
@@ -39,8 +28,18 @@ module.exports.ensureStatus = (status) => {
     console.log('User status:', req.session.user.status);
     console.log('Required status:', status);
     console.log('Redirecting to /login due to status mismatch');
-    // Forbidden if status doesn't match
-    res.status(403).send('Forbidden: Status does not match');
+    res.redirect('/users/getprofile');
+  };
+};
+
+// Middleware to check if the user has a specific role
+module.exports.ensureRole = (role) => {
+  return (req, res, next) => {
+    if (req.session && req.session.user && req.session.user.role === role) {
+      return next();
+    }
+    // Forbidden if role doesn't match
+    res.status(403).send('Forbidden: Insufficient permissions');
   };
 };
 

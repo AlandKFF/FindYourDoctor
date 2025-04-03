@@ -14,20 +14,20 @@
             
             <!-- Desktop Menu -->
             <div class="hidden md:flex items-center space-x-1">
-                <a href="/doctors" class="px-3 py-2 rounded-md text-gray-700 hover:text-blue-600 hover:bg-gray-50 transition-all duration-200">Doctors</a>
-                <a href="/hospitals" class="px-3 py-2 rounded-md text-gray-700 hover:text-blue-600 hover:bg-gray-50 transition-all duration-200">Hospitals</a>
-                <a href="/about" class="px-3 py-2 rounded-md text-gray-700 hover:text-blue-600 hover:bg-gray-50 transition-all duration-200">About</a>
-                <a href="/contact" class="px-3 py-2 rounded-md text-gray-700 hover:text-blue-600 hover:bg-gray-50 transition-all duration-200">Contact</a>
+                <a href="/doctors" class="px-3 py-2 rounded-md text-gray-700 <%= currentPath === '/doctors' ? 'bg-gray-100 text-blue-600' : 'hover:text-blue-600 hover:bg-gray-50' %> transition-all duration-200">Doctors</a>
+                <a href="/hospitals" class="px-3 py-2 rounded-md text-gray-700 <%= currentPath === '/hospitals' ? 'bg-gray-100 text-blue-600' : 'hover:text-blue-600 hover:bg-gray-50' %> transition-all duration-200">Hospitals</a>
+                <a href="/about" class="px-3 py-2 rounded-md text-gray-700 <%= currentPath === '/about' ? 'bg-gray-100 text-blue-600' : 'hover:text-blue-600 hover:bg-gray-50' %> transition-all duration-200">About</a>
+                <a href="/contact" class="px-3 py-2 rounded-md text-gray-700 <%= currentPath === '/contact' ? 'bg-gray-100 text-blue-600' : 'hover:text-blue-600 hover:bg-gray-50' %> transition-all duration-200">Contact</a>
                 
                 <% if (locals.loggedInUserId) { %>
                     <div class="relative ml-3 group">
-                        <a href="/users/getprofile" class="px-3 py-2 rounded-md text-gray-700 hover:text-blue-600 hover:bg-gray-50 transition-all duration-200">Profile</a>
+                        <a href="/users/getprofile" class="px-3 py-2 rounded-md text-gray-700 <%= currentPath === '/users/getprofile' ? 'bg-gray-100 text-blue-600' : 'hover:text-blue-600 hover:bg-gray-50' %> transition-all duration-200">Profile</a>
                         <% if(locals.isAdmin){ %>
-                            <div class="absolute right-0 w-48 mt-2 py-2 bg-white rounded-md shadow-lg hidden group-hover:block">
-                                <a href="/users" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Users</a>
-                                <a href="/contact/reports" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Reports</a>
-                                <a href="/hospitals/requests" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Requests</a>
-                                <a href="/hospitals/newhospitals" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">New Hospital</a>
+                            <div class="absolute right-0 w-48 mt-2 py-2 bg-white rounded-md shadow-lg <%= ['/users', '/contact/reports', '/hospitals/requests', '/hospitals/newhospitals'].includes(currentPath) ? '' : 'hidden' %> group-hover:block">
+                                <a href="/users" class="block px-4 py-2 text-sm text-gray-700 <%= currentPath === '/users' ? 'bg-gray-100' : 'hover:bg-gray-100' %>">Users</a>
+                                <a href="/contact/reports" class="block px-4 py-2 text-sm text-gray-700 <%= currentPath === '/contact/reports' ? 'bg-gray-100' : 'hover:bg-gray-100' %>">Reports</a>
+                                <a href="/hospitals/requests" class="block px-4 py-2 text-sm text-gray-700 <%= currentPath === '/hospitals/requests' ? 'bg-gray-100' : 'hover:bg-gray-100' %>">Requests</a>
+                                <a href="/hospitals/newhospitals" class="block px-4 py-2 text-sm text-gray-700 <%= currentPath === '/hospitals/newhospitals' ? 'bg-gray-100' : 'hover:bg-gray-100' %>">New Hospital</a>
                             </div>
                         <% } %>
                     </div>
@@ -50,20 +50,20 @@
         <!-- Mobile Menu -->
         <div id="mobile-menu" class="hidden md:hidden">
             <div class="px-2 pt-2 pb-3 space-y-1 bg-gray-50 rounded-md mt-2">
-                <a href="/doctors" class="block px-3 py-2 rounded-md text-gray-700 hover:text-blue-600 hover:bg-gray-100 transition-all duration-200">Doctors</a>
-                <a href="/hospitals" class="block px-3 py-2 rounded-md text-gray-700 hover:text-blue-600 hover:bg-gray-100 transition-all duration-200">Hospitals</a>
-                <a href="/about" class="block px-3 py-2 rounded-md text-gray-700 hover:text-blue-600 hover:bg-gray-100 transition-all duration-200">About</a>
-                <a href="/contact" class="block px-3 py-2 rounded-md text-gray-700 hover:text-blue-600 hover:bg-gray-100 transition-all duration-200">Contact</a>
+                <a href="/doctors" class="block px-3 py-2 rounded-md text-gray-700 <%= currentPath === '/doctors' ? 'bg-gray-100 text-blue-600' : 'hover:text-blue-600 hover:bg-gray-100' %> transition-all duration-200">Doctors</a>
+                <a href="/hospitals" class="block px-3 py-2 rounded-md text-gray-700 <%= currentPath === '/hospitals' ? 'bg-gray-100 text-blue-600' : 'hover:text-blue-600 hover:bg-gray-100' %> transition-all duration-200">Hospitals</a>
+                <a href="/about" class="block px-3 py-2 rounded-md text-gray-700 <%= currentPath === '/about' ? 'bg-gray-100 text-blue-600' : 'hover:text-blue-600 hover:bg-gray-100' %> transition-all duration-200">About</a>
+                <a href="/contact" class="block px-3 py-2 rounded-md text-gray-700 <%= currentPath === '/contact' ? 'bg-gray-100 text-blue-600' : 'hover:text-blue-600 hover:bg-gray-100' %> transition-all duration-200">Contact</a>
                 
                 <% if (locals.loggedInUserId) { %>
-                    <a href="/users/getprofile" class="block px-3 py-2 rounded-md text-gray-700 hover:text-blue-600 hover:bg-gray-100 transition-all duration-200">Profile</a>
+                    <a href="/users/getprofile" class="block px-3 py-2 rounded-md text-gray-700 <%= currentPath === '/users/getprofile' ? 'bg-gray-100 text-blue-600' : 'hover:text-blue-600 hover:bg-gray-100' %> transition-all duration-200">Profile</a>
                     <% if(locals.isAdmin){ %>
                         <div class="border-t border-gray-200 mt-2 pt-2">
                             <p class="px-3 py-2 text-sm font-medium text-gray-500">Admin</p>
-                            <a href="/users" class="block px-3 py-2 rounded-md text-gray-700 hover:text-blue-600 hover:bg-gray-100 transition-all duration-200">Users</a>
-                            <a href="/contact/reports" class="block px-3 py-2 rounded-md text-gray-700 hover:text-blue-600 hover:bg-gray-100 transition-all duration-200">Reports</a>
-                            <a href="/hospitals/requests" class="block px-3 py-2 rounded-md text-gray-700 hover:text-blue-600 hover:bg-gray-100 transition-all duration-200">Requests</a>
-                            <a href="/hospitals/newhospitals" class="block px-3 py-2 rounded-md text-gray-700 hover:text-blue-600 hover:bg-gray-100 transition-all duration-200">New Hospital</a>
+                            <a href="/users" class="block px-3 py-2 rounded-md text-gray-700 <%= currentPath === '/users' ? 'bg-gray-100 text-blue-600' : 'hover:text-blue-600 hover:bg-gray-100' %> transition-all duration-200">Users</a>
+                            <a href="/contact/reports" class="block px-3 py-2 rounded-md text-gray-700 <%= currentPath === '/contact/reports' ? 'bg-gray-100 text-blue-600' : 'hover:text-blue-600 hover:bg-gray-100' %> transition-all duration-200">Reports</a>
+                            <a href="/hospitals/requests" class="block px-3 py-2 rounded-md text-gray-700 <%= currentPath === '/hospitals/requests' ? 'bg-gray-100 text-blue-600' : 'hover:text-blue-600 hover:bg-gray-100' %> transition-all duration-200">Requests</a>
+                            <a href="/hospitals/newhospitals" class="block px-3 py-2 rounded-md text-gray-700 <%= currentPath === '/hospitals/newhospitals' ? 'bg-gray-100 text-blue-600' : 'hover:text-blue-600 hover:bg-gray-100' %> transition-all duration-200">New Hospital</a>
                         </div>
                     <% } %>
                     <a href="/auth/logout" class="block px-3 py-2 mt-2 text-center rounded-md bg-red-500 text-white hover:bg-red-600 transition-colors duration-200">Logout</a>
@@ -84,7 +84,6 @@
         
         menuToggle.addEventListener('click', function() {
             mobileMenu.classList.toggle('hidden');
-            
             // Animate the menu icon
             if (mobileMenu.classList.contains('hidden')) {
                 menuIcon.setAttribute('d', 'M4 6h16M4 12h16M4 18h16');
@@ -96,7 +95,6 @@
         // Close mobile menu when clicking outside
         document.addEventListener('click', function(event) {
             const isClickInside = menuToggle.contains(event.target) || mobileMenu.contains(event.target);
-            
             if (!isClickInside && !mobileMenu.classList.contains('hidden')) {
                 mobileMenu.classList.add('hidden');
                 menuIcon.setAttribute('d', 'M4 6h16M4 12h16M4 18h16');
