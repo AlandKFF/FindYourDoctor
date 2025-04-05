@@ -286,7 +286,6 @@ const User = sequelize.define('users', {
 }, { timestamps: true });
 
 // --- Hospital-User Relationship ---
-// --- Hospital-User Relationship ---
 const HospitalUser = sequelize.define('hospital_users', {
     id: {
         type: DataTypes.INTEGER,

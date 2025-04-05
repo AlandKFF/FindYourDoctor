@@ -58,7 +58,7 @@ app.get('/privacy', (req, res) => {
 });
 
 // Sync Sequelize & Start Server 
-sequelize.sync() // {force: true}
+sequelize.sync({force: true}) // {force: true}
     .then(() => {
         app.listen(PORT, () => {
             console.log(`Server is running on port ${PORT}`);
