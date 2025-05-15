@@ -1,8 +1,23 @@
 <div class="space-y-8">
-  <div class="flex justify-between items-center">
-    <h1 class="text-3xl font-bold text-gray-900">Find Doctors</h1>
-    <form action="/doctors" method="GET" class="relative flex space-x-4">
-      <div class="relative">
+  <!-- Header Section -->
+  <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+    <h1 class="text-2xl sm:text-3xl font-bold text-gray-900">Find Doctors</h1>
+    
+    <!-- Add Doctor Button -->
+    <% if (locals.loggedInUserId || locals.isAdmin) { %>
+      <a href="/doctors/create" 
+         class="inline-flex items-center bg-primary-600 hover:bg-primary-700 text-black font-medium py-2.5 px-5 rounded-md shadow hover:shadow-lg transition-all duration-150 gap-2">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+        </svg>
+        <span>Add New Doctor</span>
+      </a>
+    <% } %>
+
+    <!-- Search Form -->
+    <form id="searchForm" action="/doctors" method="GET" class="w-full sm:w-auto flex flex-col sm:flex-row gap-3 sm:space-x-4">
+      <!-- Search Input -->
+      <div class="relative w-full sm:w-64">
         <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
           <svg class="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
@@ -13,74 +28,140 @@
                autocomplete="off"
                value="<%= typeof search !== 'undefined' ? search : '' %>"
                placeholder="Search doctors..."
-               class="pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 w-64">
+               class="w-full pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500">
+      </div>
+      
+      <!-- Filters Grid -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3">
+        <!-- Country Filter -->
+        <div class="relative w-full">
+          <select name="country" class="w-full py-2 px-4 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500">
+            <option value="">All Countries</option>
+            <% if (typeof countries !== 'undefined') { %>
+              <% countries.forEach(country => { %>
+                <option value="<%= country.country_id %>" <%= selectedCountry == country.country_id ? 'selected' : '' %>>
+                  <%= country.name %>
+                </option>
+              <% }); %>
+            <% } %>
+          </select>
+        </div>
+        
+        <!-- City Filter -->
+        <% if (typeof selectedCountry !== 'undefined' && selectedCountry) { %>
+          <div class="relative w-full">
+            <select name="city" class="w-full py-2 px-4 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500">
+              <option value="">All Cities</option>
+              <% if (typeof cities !== 'undefined' && Array.isArray(cities)) { %>
+                <% cities.forEach(city => { %>
+                  <option value="<%= city.city_id %>" 
+                    <%= (typeof selectedCity !== 'undefined' && selectedCity == city.city_id) ? 'selected' : '' %>>
+                    <%= city.name %>
+                  </option>
+                <% }); %>
+              <% } %>
+            </select>
+          </div>
+        <% } %>
+        
+        <!-- Area Filter -->
+        <% if (typeof selectedCity !== 'undefined' && selectedCity) { %>
+          <div class="relative w-full">
+            <select name="area" class="w-full py-2 px-4 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500">
+              <option value="">All Areas</option>
+              <% if (typeof areas !== 'undefined') { %>
+                <% areas.forEach(area => { %>
+                  <option value="<%= area.area_id %>" <%= selectedArea == area.area_id ? 'selected' : '' %>>
+                    <%= area.name %>
+                  </option>
+                <% }); %>
+              <% } %>
+            </select>
+          </div>
+        <% } %>
+        
+        <!-- Hospital Filter -->
+        <% if (typeof selectedArea !== 'undefined' && selectedArea) { %>
+          <div class="relative w-full">
+            <select name="hospital" class="w-full py-2 px-4 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500">
+              <option value="">All Hospitals</option>
+              <% if (typeof hospitals !== 'undefined') { %>
+                <% hospitals.forEach(hospital => { %>
+                  <option value="<%= hospital.hospital_id %>" <%= selectedHospital == hospital.hospital_id ? 'selected' : '' %>>
+                    <%= hospital.name %>
+                  </option>
+                <% }); %>
+              <% } %>
+            </select>
+          </div>
+        <% } %>
       </div>
     </form>
   </div>
 
-  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+  <!-- Doctors Grid -->
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
     <% doctors.forEach(doctor => { %>
       <div class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300">
-        <div class="p-6">
-          <div class="flex items-center mb-4">
-            <!-- Doctor Image wrapped in link -->
-            <a href="/doctors/<%= doctor.doctor_id %>">
+        <div class="p-4 sm:p-6">
+          <!-- Doctor Header -->
+          <div class="flex flex-col sm:flex-row sm:items-center gap-4 mb-4">
+            <a href="/doctors/<%= doctor.doctor_id %>" class="flex-shrink-0">
               <img src="<%= doctor.image_url || 'https://images.unsplash.com/photo-1537368910025-700350fe46c7?w=800&auto=format&fit=crop&q=60&ixlib=rb-4.0.3' %>" 
                    alt="<%= doctor.first_name %> <%= doctor.last_name %>"
-                   class="h-20 w-20 rounded-full object-cover mr-4 hover:opacity-90 transition-opacity duration-200">
+                   class="h-20 w-20 rounded-full object-cover hover:opacity-90 transition-opacity duration-200">
             </a>
-            <div>
-              <!-- Doctor Name wrapped in link -->
-              <a href="/doctors/<%= doctor.doctor_id %>" class="hover:underline">
-                <h3 class="text-xl font-semibold text-gray-900">
+            <div class="flex-grow min-w-0">
+              <a href="/doctors/<%= doctor.doctor_id %>" class="hover:underline block">
+                <h3 class="text-lg sm:text-xl font-semibold text-gray-900 truncate">
                   <%= doctor.title %> <%= doctor.first_name %> <%= doctor.last_name %>
                 </h3>
               </a>
-              <p class="text-gray-600">
+              <p class="text-sm sm:text-base text-gray-600">
                 <%= doctor.doctor_certifications[0]?.title || 'Specialist' %>
               </p>
             </div>
           </div>
           
-          <p class="text-gray-600 mb-4 line-clamp-3">
+          <!-- Bio -->
+          <p class="text-sm sm:text-base text-gray-600 mb-4 line-clamp-3">
             <%= doctor.bio %>
           </p>
 
-          <div class="space-y-4 mb-4">
+          <!-- Hospitals -->
+          <div class="space-y-3 mb-4">
             <% (doctor.hospitals || []).slice(0, 2).forEach(hospital => { %>
-              <div class="flex items-center justify-between">
-                <div class="flex items-center space-x-3">
-                  <!-- Hospital Image wrapped in link -->
-                  <a href="/hospitals/<%= hospital.hospital_id %>">
+              <div class="flex flex-col sm:flex-row items-start sm:items-center gap-3">
+                <div class="flex items-center space-x-3 flex-grow min-w-0">
+                  <a href="/hospitals/<%= hospital.hospital_id %>" class="flex-shrink-0">
                     <img src="<%= hospital.image_url || 'https://images.unsplash.com/photo-1632833239869-a37e3a5806d2?w=800&auto=format&fit=crop&q=60&ixlib=rb-4.0.3' %>" 
                          alt="<%= hospital.name %>"
-                         class="h-12 w-12 rounded-md object-cover flex-shrink-0 hover:opacity-90 transition-opacity duration-200">
+                         class="h-12 w-12 rounded-md object-cover hover:opacity-90 transition-opacity duration-200">
                   </a>
-                  <div>
-                    <!-- Hospital Name wrapped in link -->
-                    <a href="/hospitals/<%= hospital.hospital_id %>" class="hover:underline">
-                      <h4 class="font-medium text-gray-900"><%= hospital.name %></h4>
+                  <div class="min-w-0">
+                    <a href="/hospitals/<%= hospital.hospital_id %>" class="hover:underline block">
+                      <h4 class="font-medium text-gray-900 truncate"><%= hospital.name %></h4>
                     </a>
-                    <p class="text-sm text-gray-500">
+                    <p class="text-sm text-gray-500 truncate">
                       <%= hospital.area?.city?.name %>, <%= hospital.area?.city?.country?.name %>
                     </p>
                   </div>
                 </div>
-                <!-- Formal styled "Get Directions" button on the right -->
-                <button class="get-direction inline-flex items-center bg-yellow-300 text-gray-900 border border-gray-300 hover:bg-yellow-500 px-3 py-1 rounded transition-colors duration-200 cursor-pointer"
+                <button class="get-direction w-full sm:w-auto inline-flex items-center justify-center bg-yellow-300 text-gray-900 border border-gray-300 hover:bg-yellow-500 px-3 py-1 rounded transition-colors duration-200 cursor-pointer"
                         data-destination="<%= hospital.address %>"
                         title="Get directions">
                   <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"/>
                   </svg>
-                  <span class="ml-1">Get Directions</span>
+                  <span class="ml-1">Directions</span>
                 </button>
               </div>
             <% }); %>
           </div>
 
-          <div class="flex justify-between items-center">
-            <div class="flex space-x-2">
+          <!-- Footer -->
+          <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+            <div class="flex flex-wrap gap-2">
               <% doctor.doctor_certifications.slice(0, 2).forEach(cert => { %>
                 <span class="bg-primary-100 text-primary-800 text-xs px-2 py-1 rounded">
                   <%= cert.title %>
@@ -98,4 +179,80 @@
       </div>
     <% }); %>
   </div>
+
+  <!-- Pagination -->
+  <% if (typeof totalPages !== 'undefined' && totalPages > 1) { %>
+    <div class="flex flex-col sm:flex-row justify-center items-center gap-4 mt-8">
+      <div class="flex flex-wrap justify-center gap-2">
+        <% 
+          // Calculate start and end page for pagination
+          let startPage = Math.max(1, currentPage - 4);
+          let endPage = Math.min(totalPages, startPage + 9);
+          if (endPage - startPage < 9) {
+            startPage = Math.max(1, endPage - 9);
+          }
+        %>
+        <% for (let i = startPage; i <= endPage; i++) { %>
+          <form method="GET" action="/doctors" class="inline">
+            <% if (search) { %><input type="hidden" name="search" value="<%= search %>"><% } %>
+            <% if (selectedCountry) { %><input type="hidden" name="country" value="<%= selectedCountry %>"><% } %>
+            <% if (selectedCity) { %><input type="hidden" name="city" value="<%= selectedCity %>"><% } %>
+            <% if (selectedArea) { %><input type="hidden" name="area" value="<%= selectedArea %>"><% } %>
+            <% if (selectedHospital) { %><input type="hidden" name="hospital" value="<%= selectedHospital %>"><% } %>
+            <input type="hidden" name="page" value="<%= i %>">
+            <input type="hidden" name="limit" value="<%= limit %>">
+            <button 
+              type="submit" 
+              class="px-3 py-1 rounded font-semibold transition-colors duration-150 text-black
+                <%= currentPage == i 
+                  ? 'bg-blue-600 border-2 border-blue-800 shadow-lg' 
+                  : 'bg-gray-200 hover:bg-blue-100' %>">
+              <%= i %>
+            </button>
+          </form>
+        <% } %>
+      </div>
+      
+      <!-- Items per page selector -->
+      <select name="limit" 
+              onchange="window.location.href='?' + new URLSearchParams({
+                search: '<%= typeof search !== 'undefined' ? search : '' %>',
+                country: '<%= typeof selectedCountry !== 'undefined' ? selectedCountry : '' %>',
+                city: '<%= typeof selectedCity !== 'undefined' ? selectedCity : '' %>',
+                area: '<%= typeof selectedArea !== 'undefined' ? selectedArea : '' %>',
+                hospital: '<%= typeof selectedHospital !== 'undefined' ? selectedHospital : '' %>',
+                page: '1',
+                limit: this.value
+              }).toString()"
+              class="w-full sm:w-auto px-2 py-1 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500">
+        <option value="9" <%= limit === 9 ? 'selected' : '' %>>9 per page</option>
+        <option value="18" <%= limit === 18 ? 'selected' : '' %>>18 per page</option>
+      </select>
+    </div>
+  <% } %>
 </div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('searchForm');
+    // Auto-submit on select change
+    form.querySelectorAll('select').forEach(function(select) {
+      select.addEventListener('change', function() {
+        form.submit();
+      });
+    });
+    // Auto-submit on search input change (optional: on input or blur)
+    const searchInput = form.querySelector('input[name="search"]');
+    if (searchInput) {
+      searchInput.addEventListener('change', function() {
+        form.submit();
+      });
+      // Optionally, submit on pressing Enter
+      searchInput.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter') {
+          form.submit();
+        }
+      });
+    }
+  });
+</script>

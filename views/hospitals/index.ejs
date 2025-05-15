@@ -1,8 +1,24 @@
-<div class="space-y-8">
-  <div class="flex justify-between items-center">
-    <h1 class="text-3xl font-bold text-gray-900">Find Hospitals</h1>
-    <form id="searchForm" action="/hospitals" method="GET" class="relative flex space-x-4">
-      <div class="relative">
+<div class="container mx-auto px-4 space-y-8 py-8">
+  <!-- Header Section -->
+  <div class="flex flex-col lg:flex-row justify-between items-center gap-4">
+    <h1 class="text-4xl font-bold text-gray-900 bg-gradient-to-r from-primary-600 to-primary-400 bg-clip-text text-transparent">
+      Find Hospitals
+    </h1>
+    
+    <% if (locals.loggedInUserId || locals.isAdmin) { %>
+      <a href="/hospitals/create" 
+         class="inline-flex items-center bg-gradient-to-r from-primary-600 to-primary-700 text-black font-bold py-3 px-6 rounded-lg shadow-md hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200">
+        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+        </svg>
+        <span>Add Hospital</span>
+      </a>
+    <% } %>
+
+    <!-- Search Form -->
+    <form id="searchForm" action="/hospitals" method="GET" 
+          class="w-full lg:w-auto flex flex-col md:flex-row gap-4 items-stretch md:items-center">
+      <div class="relative flex-grow md:max-w-xs">
         <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
           <svg class="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
@@ -12,68 +28,104 @@
                name="search" 
                value="<%= typeof search !== 'undefined' ? search : '' %>"
                placeholder="Search hospitals..." 
-               class="pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 w-64">
+               class="w-full pl-10 pr-4 py-2.5 border-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500">
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+        <!-- Country Filter -->
+        <select name="country" 
+                class="w-full py-2.5 px-4 border-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 bg-white">
+          <option value="">All Countries</option>
+          <% if (typeof countries !== 'undefined') { %>
+            <% countries.forEach(country => { %>
+              <option value="<%= country.country_id %>" <%= selectedCountry == country.country_id ? 'selected' : '' %>>
+                <%= country.name %>
+              </option>
+            <% }); %>
+          <% } %>
+        </select>
+
+        <!-- City Filter -->
+        <select name="city" 
+                class="w-full py-2.5 px-4 border-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 bg-white">
+          <option value="">All Cities</option>
+          <% if (typeof cities !== 'undefined') { %>
+            <% cities.forEach(city => { %>
+              <option value="<%= city.city_id %>" <%= selectedCity == city.city_id ? 'selected' : '' %>>
+                <%= city.name %>
+              </option>
+            <% }); %>
+          <% } %>
+        </select>
+
+        <!-- Area Filter -->
+        <select name="area" 
+                class="w-full py-2.5 px-4 border-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 bg-white">
+          <option value="">All Areas</option>
+          <% if (typeof areas !== 'undefined') { %>
+            <% areas.forEach(area => { %>
+              <option value="<%= area.area_id %>" <%= selectedArea == area.area_id ? 'selected' : '' %>>
+                <%= area.name %>
+              </option>
+            <% }); %>
+          <% } %>
+        </select>
       </div>
     </form>
   </div>
 
-  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+  <!-- Hospital Cards Grid -->
+  <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
     <% hospitals.forEach(hospital => { %>
-      <div class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300">
-        <!-- Clickable Hospital Image -->
-        <a href="/hospitals/<%= hospital.hospital_id %>">
+      <div class="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1">
+        <a href="/hospitals/<%= hospital.hospital_id %>" class="block relative">
           <img src="<%= hospital.image_url || 'https://images.unsplash.com/photo-1632833239869-a37e3a5806d2?w=800&auto=format&fit=crop&q=60&ixlib=rb-4.0.3' %>" 
                alt="<%= hospital.name %>"
-               class="w-full h-48 object-cover hover:opacity-90 transition-opacity duration-200">
-        </a>
-        <div class="p-6">
-          <!-- Header: Hospital Name & Emergency Availability -->
-          <div class="flex items-center justify-between mb-2">
-            <!-- Clickable Hospital Name -->
-            <a href="/hospitals/<%= hospital.hospital_id %>" class="hover:underline">
-              <h3 class="text-xl font-semibold text-gray-900">
-                <%= hospital.name %>
-              </h3>
-            </a>
-            <!-- Emergency Availability placed on the right of the hospital name -->
-            <span class="<%= hospital.emergency_status ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' %> px-3 py-1 rounded-full text-sm font-medium">
+               class="w-full h-56 object-cover hover:scale-105 transition-transform duration-300">
+          <div class="absolute top-4 right-4">
+            <span class="<%= hospital.emergency_status ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' %> px-4 py-2 rounded-full text-sm font-semibold shadow-md">
               <%= hospital.emergency_status ? 'Emergency Available' : 'No Emergency' %>
             </span>
           </div>
+        </a>
 
-          <p class="text-gray-600 mb-4 line-clamp-2">
+        <div class="p-6 space-y-4">
+          <a href="/hospitals/<%= hospital.hospital_id %>" class="block group">
+            <h3 class="text-2xl font-bold text-gray-900 group-hover:text-primary-600 transition-colors">
+              <%= hospital.name %>
+            </h3>
+          </a>
+
+          <p class="text-gray-600 text-sm line-clamp-2">
             <%= hospital.summary %>
           </p>
 
-          <!-- Location and Get Directions -->
-          <div class="flex items-center justify-between mb-4 text-sm text-gray-500">
-            <div class="flex items-center">
-              <svg class="h-5 w-5 text-gray-400 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
-              </svg>
-              <span>
-                <%= hospital.area?.name || 'Unknown Area' %>,
-                <%= hospital.area?.city?.name || 'Unknown City' %>,
-                <%= hospital.area?.city?.country?.name || 'Unknown Country' %>
-              </span>
-            </div>
-            <!-- Formal styled "Get Directions" button -->
-            <button class="get-direction inline-flex items-center bg-yellow-300 text-gray-900 border border-gray-300 hover:bg-yellow-500 px-3 py-1 rounded transition-colors duration-200 cursor-pointer"
+          <div class="flex items-start gap-2 text-sm text-gray-500">
+            <svg class="h-5 w-5 text-gray-400 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+            </svg>
+            <span>
+              <%= hospital.area?.name || 'Unknown Area' %>,
+              <%= hospital.area?.city?.name || 'Unknown City' %>,
+              <%= hospital.area?.city?.country?.name || 'Unknown Country' %>
+            </span>
+          </div>
+
+          <div class="flex items-center justify-between pt-4 border-t">
+            <button class="get-direction inline-flex items-center bg-yellow-400 hover:bg-yellow-500 text-gray-900 px-4 py-2 rounded-lg transition-colors duration-200 shadow-md hover:shadow-lg"
                     data-destination="<%= hospital.address %>"
                     title="Get directions">
               <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"/>
               </svg>
-              <span class="ml-1">Directions</span>
+              <span class="ml-2 font-medium">Directions</span>
             </button>
-          </div>
 
-          <!-- Bottom: View Details Link -->
-          <div class="flex items-center justify-end">
-            <a href="/hospitals/<%= hospital.hospital_id %>" class="text-primary-600 hover:text-primary-800 font-medium flex items-center">
+            <a href="/hospitals/<%= hospital.hospital_id %>" 
+               class="inline-flex items-center text-primary-600 hover:text-primary-800 font-medium">
               View Details
-              <svg class="h-5 w-5 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg class="h-5 w-5 ml-1 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
               </svg>
             </a>
@@ -82,4 +134,92 @@
       </div>
     <% }); %>
   </div>
+
+  <!-- Pagination Section -->
+  <div class="flex flex-col sm:flex-row justify-between items-center gap-4 mt-12">
+    <div class="flex items-center gap-2">
+      <% 
+        const query = {
+          search: typeof search !== 'undefined' ? search : '',
+          country: typeof selectedCountry !== 'undefined' ? selectedCountry : '',
+          city: typeof selectedCity !== 'undefined' ? selectedCity : '',
+          area: typeof selectedArea !== 'undefined' ? selectedArea : ''
+        };
+      %>
+      
+      <% if (currentPage > 1) { %>
+        <a href="?<%= new URLSearchParams({...query, page: 1}).toString() %>" 
+           class="hidden sm:inline-flex px-4 py-2 bg-white border-2 border-gray-200 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors">
+          First
+        </a>
+        <a href="?<%= new URLSearchParams({...query, page: currentPage - 1}).toString() %>" 
+           class="px-4 py-2 bg-white border-2 border-gray-200 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors">
+          Previous
+        </a>
+      <% } %>
+
+      <div class="flex gap-2">
+        <% 
+          let startPage = Math.max(1, currentPage - 2);
+          let endPage = Math.min(totalPages, startPage + 4);
+          if (endPage - startPage < 4) {
+            startPage = Math.max(1, endPage - 4);
+          }
+        %>
+        
+        <% for (let i = startPage; i <= endPage; i++) { %>
+          <a href="?<%= new URLSearchParams({...query, page: i}).toString() %>"
+             class="hidden sm:inline-flex px-4 py-2 rounded-lg <%= currentPage === i ? 'bg-black text-white font-bold' : 'bg-white border-2 border-gray-200 text-gray-700 hover:bg-gray-50' %> transition-colors">
+            <%= i %>
+          </a>
+        <% } %>
+      </div>
+
+      <% if (currentPage < totalPages) { %>
+        <a href="?<%= new URLSearchParams({...query, page: currentPage + 1}).toString() %>"
+           class="px-4 py-2 bg-white border-2 border-gray-200 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors">
+          Next
+        </a>
+        <a href="?<%= new URLSearchParams({...query, page: totalPages}).toString() %>"
+           class="hidden sm:inline-flex px-4 py-2 bg-white border-2 border-gray-200 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors">
+          Last
+        </a>
+      <% } %>
+    </div>
+
+    <div class="flex items-center gap-2">
+      <span class="text-gray-600">Show:</span>
+      <select name="limit" 
+              onchange="window.location.href='?<%= new URLSearchParams({...query, page: 1, limit: ''}).toString() %>' + this.value" 
+              class="px-3 py-2 border-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500">
+        <option value="9" <%= limit === 9 ? 'selected' : '' %>>9 per page</option>
+        <option value="18" <%= limit === 18 ? 'selected' : '' %>>18 per page</option>
+      </select>
+    </div>
+  </div>
 </div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('searchForm');
+    // Auto-submit on select change
+    const selects = form.querySelectorAll('select');
+    selects.forEach(select => {
+      select.addEventListener('change', function() {
+        form.submit();
+      });
+    });
+    
+    // Also submit on search input if you want real-time search
+    const searchInput = form.querySelector('input[name="search"]');
+    if (searchInput) {
+      searchInput.addEventListener('keyup', function(e) {
+        // Optional: Add a delay before submitting to avoid too many requests
+        if (this._timeout) clearTimeout(this._timeout);
+        this._timeout = setTimeout(() => {
+          form.submit();
+        }, 500);
+      });
+    }
+  });
+</script>

@@ -23,43 +23,57 @@ document.addEventListener('DOMContentLoaded', function() {
 
 
 document.addEventListener('DOMContentLoaded', function() {
-    document.querySelectorAll('.get-direction').forEach(link => {
-      link.addEventListener('click', function(event) {
-        event.preventDefault();
-        if (navigator.geolocation) {
-          navigator.geolocation.getCurrentPosition(function(position) {
-            const lat = position.coords.latitude;
-            const lng = position.coords.longitude;
-            const destination = link.getAttribute('data-destination');
-            const google_map_api = "AIzaSyDz4rwd5VeTxJcr60OQ7Tm69VdzZr9L1-U"
-            // Reverse geocoding using Google Maps Geocoding API
-            // Replace YOUR_API_KEY with your actual Google Maps API key
-            fetch(`https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${lng}&key=${google_map_api}`)
-              .then(response => response.json())
-              .then(data => {
-                if (data.status === "OK" && data.results.length > 0) {
-                  // Retrieve the full formatted address
-                  const origin = data.results[0].formatted_address;
-                  // Construct the Google Maps directions URL using the full address
-                  const url = `https://www.google.com/maps/dir/?api=1&origin=${encodeURIComponent(origin)}&destination=${encodeURIComponent(destination)}`;
-                  window.open(url, '_blank');
-                } else {
-                  alert("Unable to retrieve your full address. Using coordinates instead.");
-                  const url = `https://www.google.com/maps/dir/?api=1&origin=${lat},${lng}&destination=${encodeURIComponent(destination)}`;
-                  window.open(url, '_blank');
-                }
-              })
-              .catch(error => {
-                alert("Error retrieving address. Using coordinates instead.");
-                const url = `https://www.google.com/maps/dir/?api=1&origin=${lat},${lng}&destination=${encodeURIComponent(destination)}`;
-                window.open(url, '_blank');
-              });
-          }, function(error) {
-            alert("Error retrieving your location. Please check your settings.");
+  const countrySelect = document.querySelector('select[name="country"]');
+  const citySelect = document.querySelector('select[name="city"]');
+  const areaSelect = document.querySelector('select[name="area"]');
+
+  if (countrySelect && citySelect && areaSelect) {
+    countrySelect.addEventListener('change', function() {
+      const countryId = this.value;
+      citySelect.innerHTML = '<option value="">All Cities</option>';
+      areaSelect.innerHTML = '<option value="">All Areas</option>';
+      if (countryId) {
+        fetch(`/hospitals/api/cities?country_id=${countryId}`)
+          .then(res => res.json())
+          .then(cities => {
+            cities.forEach(city => {
+              const opt = document.createElement('option');
+              opt.value = city.city_id;
+              opt.textContent = city.name;
+              citySelect.appendChild(opt);
+            });
           });
-        } else {
-          alert("Geolocation is not supported by your browser.");
-        }
-      });
+      }
     });
+
+    citySelect.addEventListener('change', function() {
+      const cityId = this.value;
+      areaSelect.innerHTML = '<option value="">All Areas</option>';
+      if (cityId) {
+        fetch(`/hospitals/api/areas?city_id=${cityId}`)
+          .then(res => res.json())
+          .then(areas => {
+            areas.forEach(area => {
+              const opt = document.createElement('option');
+              opt.value = area.area_id;
+              opt.textContent = area.name;
+              areaSelect.appendChild(opt);
+            });
+          });
+      }
+    });
+  }
+});
+
+document.querySelectorAll('.get-direction').forEach(link => {
+  link.addEventListener('click', function(event) {
+    event.preventDefault();
+    const destination = link.getAttribute('data-destination');
+    
+    // Open Google Maps directly showing only the destination location
+    // This doesn't request the user's current location
+    const url = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(destination)}`;
+    window.open(url, '_blank');
   });
+});
+// Removed the second event listener that was requesting location permissions
