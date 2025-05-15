@@ -32,21 +32,41 @@ router.get('/register', (req, res) => {
 
 router.post('/register', async (req, res) => {
     try {
-        const { first_name, last_name, email, password, role, phone_number, bio } = req.body;
+        console.log('POST /register - Starting registration process');
         
+        const { first_name, last_name, email, password, phone_number, bio, privacy_policy_agreement, terms_of_service_agreement } = req.body;
+        
+        // Validate agreements
+        if (!privacy_policy_agreement || !terms_of_service_agreement) {
+            return res.render('auth/register', {
+                error: 'You must accept both the Privacy Policy and Terms of Service to register',
+                title: 'Register'
+            });
+        }
+        console.log('POST /register - Received data:', { first_name, last_name, email, phone_number, bio, privacy_policy_agreement, terms_of_service_agreement });
+        
+        const role = "hospital_manager";
+        console.log('POST /register - Role set to:', role);
+
         // Check if user already exists
+        console.log('POST /register - Checking for existing user with email:', email);
         const existingUser = await User.findOne({ where: { email } });
         if (existingUser) {
+            console.log('POST /register - User already exists with email:', email);
             return res.render('auth/register', {
                 error: 'Email already registered',
                 title: 'Register'
             });
         }
+        console.log('POST /register - No existing user found, proceeding with registration');
 
         // Hash password
+        console.log('POST /register - Hashing password');
         const hashedPassword = await bcrypt.hash(password, 10);
+        console.log('POST /register - Password hashed successfully');
 
         // Create user
+        console.log('POST /register - Creating new user');
         await User.create({
             first_name,
             last_name,
@@ -55,10 +75,16 @@ router.post('/register', async (req, res) => {
             role,
             status: 'pending',
             phone_number,
-            bio
+            bio,
+            privacy_policy_agreement,
+            terms_of_service_agreement
         });
+        console.log('POST /register - User created in database');
+
         // set session
+        console.log('POST /register - Fetching newly created user');
         const newUser = await User.findOne({ where: { email } });
+        console.log('POST /register - Setting up user session');
         req.session.user = {
             id: newUser.user_id,
             email,
@@ -66,11 +92,14 @@ router.post('/register', async (req, res) => {
             name: `${first_name} ${last_name}`,
             status: 'pending'
         };
+        console.log('POST /register - User session created:', req.session.user);
         console.log('POST /register - User created:', email);
+        console.log('POST /register - Redirecting to profile page');
         res.redirect('/users/getprofile');
     } catch (error) {
         console.log('Error in POST /register:', error.message);
-        console.log(error.stack);
+        console.log('Full error stack:', error.stack);
+        console.log('POST /register - Registration failed, rendering error page');
         res.render('auth/register', {
             error: 'Registration failed',
             title: 'Register'

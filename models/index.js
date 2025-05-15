@@ -3,7 +3,7 @@ require('dotenv').config();
 // const DB_password = process.env.DB_PASSWORD
 
 const sequelize = new Sequelize(
-  process.env.DB_NAME || "find_your_doctor",    // Database name
+  process.env.DB_NAME || "findyourdoctor",    // Database name
   process.env.DB_USER || "root",    // Username
   process.env.DB_PASSWORD || "(Aland&DB)", // Password
   {
@@ -247,7 +247,7 @@ const User = sequelize.define('users', {
     user_id: {
         type: DataTypes.INTEGER,
         primaryKey: true,
-        autoIncrement: true,
+        autoIncrement: true
     },
     first_name: {
         type: DataTypes.STRING,
@@ -255,10 +255,6 @@ const User = sequelize.define('users', {
     },
     last_name: {
         type: DataTypes.STRING,
-        allowNull: false
-    },
-    role: {
-        type: DataTypes.ENUM('hospital manager', 'admin'),
         allowNull: false
     },
     email: {
@@ -270,20 +266,29 @@ const User = sequelize.define('users', {
         type: DataTypes.STRING,
         allowNull: false
     },
+    role: {
+        type: DataTypes.ENUM('admin', 'hospital_manager'),
+        allowNull: false
+    },
     status: {
         type: DataTypes.ENUM('pending', 'accept', 'reject'),
-        allowNull: false,
         defaultValue: 'pending'
     },
     phone_number: {
-        type: DataTypes.STRING,
-        allowNull: true
+        type: DataTypes.STRING
     },
     bio: {
-        type: DataTypes.TEXT,
-        allowNull: true
+        type: DataTypes.TEXT
     },
-}, { timestamps: true });
+    privacy_policy_agreement: {
+        type: DataTypes.BOOLEAN,
+        defaultValue: false
+    },
+    terms_of_service_agreement: {
+        type: DataTypes.BOOLEAN,
+        defaultValue: false
+    }
+}, { timestamps: false });
 
 // --- Hospital-User Relationship ---
 const HospitalUser = sequelize.define('hospital_users', {

@@ -1,102 +1,171 @@
-<div class="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+<div class="min-h-screen bg-gradient-to-b from-blue-50 to-white flex flex-col justify-center py-12 px-4 sm:px-6 lg:px-8">
     <div class="sm:mx-auto sm:w-full sm:max-w-md">
-        <h2 class="mt-6 text-center text-3xl font-extrabold text-gray-900">
-            Create your account
-        </h2>
-        <p class="mt-2 text-center text-sm text-gray-600">
-            Join our healthcare provider network
-        </p>
+        <div class="text-center">
+            <h2 class="mt-6 text-3xl font-extrabold text-gray-900 tracking-tight">
+                Create your account
+            </h2>
+            <p class="mt-2 text-sm text-gray-600">
+                Join our healthcare provider network and help patients find the care they need
+            </p>
+        </div>
     </div>
 
     <div class="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
-        <div class="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
+        <div class="bg-white py-8 px-4 shadow-lg sm:rounded-lg sm:px-10 border border-gray-100">
             <% if (typeof error !== 'undefined') { %>
-                <div class="mb-4 bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded relative" role="alert">
-                    <%= error %>
+                <div class="mb-6 bg-red-50 border-l-4 border-red-400 text-red-700 p-4 rounded-md" role="alert">
+                    <p class="font-medium">Registration Error</p>
+                    <p><%= error %></p>
                 </div>
             <% } %>
 
             <form class="space-y-6" action="/auth/register" method="POST">
-                <div class="grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-2">
-                    <div>
-                        <label for="first_name" class="block text-sm font-medium text-gray-700">
-                            First name
-                        </label>
-                        <div class="mt-1">
-                            <input type="text" name="first_name" id="first_name" required
-                                   class="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+                <!-- Personal Information Section -->
+                <div class="bg-gray-50 px-4 py-5 sm:rounded-lg sm:p-6">
+                    <h3 class="text-lg font-medium leading-6 text-gray-900 mb-4">Personal Information</h3>
+                    
+                    <div class="grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-2">
+                        <div>
+                            <label for="first_name" class="block text-sm font-medium text-gray-700">
+                                First name
+                            </label>
+                            <div class="mt-1 relative rounded-md shadow-sm">
+                                <input type="text" name="first_name" id="first_name" required
+                                       class="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+                            </div>
+                        </div>
+
+                        <div>
+                            <label for="last_name" class="block text-sm font-medium text-gray-700">
+                                Last name
+                            </label>
+                            <div class="mt-1 relative rounded-md shadow-sm">
+                                <input type="text" name="last_name" id="last_name" required
+                                       class="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+                            </div>
                         </div>
                     </div>
 
-                    <div>
-                        <label for="last_name" class="block text-sm font-medium text-gray-700">
-                            Last name
+                    <div class="mt-6">
+                        <label for="email" class="block text-sm font-medium text-gray-700">
+                            Email address
                         </label>
-                        <div class="mt-1">
-                            <input type="text" name="last_name" id="last_name" required
-                                   class="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+                        <div class="mt-1 relative rounded-md shadow-sm">
+                            <input id="email" name="email" type="email" required
+                                   class="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                                   placeholder="you@example.com">
                         </div>
                     </div>
-                </div>
 
-                <div>
-                    <label for="email" class="block text-sm font-medium text-gray-700">
-                        Email address
-                    </label>
-                    <div class="mt-1">
-                        <input id="email" name="email" type="email" required
-                               class="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+                    <div class="mt-6">
+                        <label for="password" class="block text-sm font-medium text-gray-700">
+                            Password
+                        </label>
+                        <div class="mt-1 relative rounded-md shadow-sm">
+                            <input id="password" name="password" type="password" required
+                                   class="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                                   placeholder="••••••••">
+                        </div>
+                        <p class="mt-1 text-xs text-gray-500">Must be at least 8 characters</p>
                     </div>
                 </div>
 
-                <div>
-                    <label for="password" class="block text-sm font-medium text-gray-700">
-                        Password
-                    </label>
-                    <div class="mt-1">
-                        <input id="password" name="password" type="password" required
-                               class="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+                <!-- Professional Information Section -->
+                <div class="bg-gray-50 px-4 py-5 sm:rounded-lg sm:p-6">
+                    <h3 class="text-lg font-medium leading-6 text-gray-900 mb-4">Professional Information</h3>
+                    
+                    <!-- <div>
+                        <label for="role" class="block text-sm font-medium text-gray-700">
+                            Role
+                        </label>
+                        <div class="mt-1 relative rounded-md shadow-sm">
+                            <select id="role" name="role" required
+                                    class="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+                                <option value="hospital manager">Hospital Manager</option>
+                                <option value="admin">Administrator</option>
+                            </select>
+                            <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+                                <svg class="h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                                    <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
+                                </svg>
+                            </div>
+                        </div>
+                    </div> -->
+
+                    <div class="mt-6">
+                        <label for="phone_number" class="block text-sm font-medium text-gray-700">
+                            Phone number
+                        </label>
+                        <div class="mt-1 relative rounded-md shadow-sm">
+                            <input type="tel" name="phone_number" id="phone_number"
+                                   class="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                                   placeholder="+1 (555) 987-6543">
+                        </div>
                     </div>
+
+                    <div class="mt-6">
+                        <label for="bio" class="block text-sm font-medium text-gray-700">
+                            Bio
+                        </label>
+                        <div class="mt-1 relative rounded-md shadow-sm">
+                            <textarea id="bio" name="bio" rows="4"
+                                      class="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                                      placeholder="Tell us about your professional background..."></textarea>
+                        </div>
+                        <p class="mt-2 text-xs text-gray-500">Brief description for your profile. URLs are hyperlinked.</p>
+                    </div>
+                    
+                    <input type="hidden" name="status" value="pending">
                 </div>
 
-                <div>
-                    <label for="role" class="block text-sm font-medium text-gray-700">
-                        Role
-                    </label>
-                    <div class="mt-1">
-                        <select id="role" name="role" required
-                                class="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
-                            <option value="hospital manager">Hospital Manager</option>
-                            <option value="admin">Administrator</option>
-                        </select>
+                <!-- Agreements Section -->
+                <div class="bg-gray-50 px-4 py-5 sm:rounded-lg sm:p-6">
+                    <h3 class="text-lg font-medium leading-6 text-gray-900 mb-4">Agreements</h3>
+                    
+                    <div class="space-y-4">
+                        <div class="flex items-start">
+                            <div class="flex items-center h-5">
+                                <input id="privacy_policy_agreement" name="privacy_policy_agreement" type="checkbox" required
+                                       class="focus:ring-blue-500 h-5 w-5 text-blue-600 border-gray-300 rounded">
+                            </div>
+                            <div class="ml-3 text-sm">
+                                <label for="privacy_policy_agreement" class="font-medium text-gray-700">Privacy Policy Agreement</label>
+                                <p class="text-gray-500">I have read and agree to the <a href="/privacy-policy" class="text-blue-600 hover:text-blue-500 underline">Privacy Policy</a>.</p>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-start">
+                            <div class="flex items-center h-5">
+                                <input id="terms_of_service_agreement" name="terms_of_service_agreement" type="checkbox" required
+                                       class="focus:ring-blue-500 h-5 w-5 text-blue-600 border-gray-300 rounded">
+                            </div>
+                            <div class="ml-3 text-sm">
+                                <label for="terms_of_service_agreement" class="font-medium text-gray-700">Terms of Service Agreement</label>
+                                <p class="text-gray-500">I have read and agree to the <a href="/terms-of-service" class="text-blue-600 hover:text-blue-500 underline">Terms of Service</a>.</p>
+                            </div>
+                        </div>
                     </div>
-                </div>
-
-                <div>
-                    <label for="phone_number" class="block text-sm font-medium text-gray-700">
-                        Phone number
-                    </label>
-                    <div class="mt-1">
-                        <input type="tel" name="phone_number" id="phone_number"
-                               class="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+                    
+                    <div class="mt-4 p-4 bg-blue-50 rounded-md border border-blue-100">
+                        <div class="flex">
+                            <div class="flex-shrink-0">
+                                <svg class="h-5 w-5 text-blue-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                                    <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2h-1V9z" clip-rule="evenodd" />
+                                </svg>
+                            </div>
+                            <div class="ml-3 flex-1 md:flex md:justify-between">
+                                <p class="text-sm text-blue-700">
+                                    Your account will be reviewed by an administrator before approval
+                                </p>
+                            </div>
+                        </div>
                     </div>
-                </div>
-
-                <div class="bio">
-                    <label for="bio" class="block text-sm font-medium text-gray-700">
-                        Bio
-                    </label>
-                    <div class="mt-1">
-                        <textarea id="bio" name="bio" rows="3"
-                                  class="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"></textarea>
-                    </div>
-                    <p class="mt-2 text-sm text-gray-500">Brief description for your profile. URLs are hyperlinked.</p>
                 </div>
 
                 <div>
                     <button type="submit"
-                            class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
-                        Register
+                            class="w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors duration-200">
+                        Create Account
                     </button>
                 </div>
             </form>
@@ -115,7 +184,7 @@
 
                 <div class="mt-6">
                     <a href="/auth/login"
-                       class="w-full flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                       class="w-full flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors duration-200">
                         Sign in instead
                     </a>
                 </div>
