@@ -39,11 +39,11 @@ app.use('/hospitals', HospitalRouter);
 app.use('/auth', AuthRouter); 
 app.use('/users', UserRouter);
 app.use('/contact', ContactRoute);
-app.use('/seed', SeedRouter);
+app.use('/', SeedRouter);
 
-app.get('/', (req, res) => {
-    res.render('index', { title: 'Home', user: req.session.user });
-});
+// app.get('/', (req, res) => {
+//     res.render('index', { title: 'Home', user: req.session.user });
+// });
 
 app.get('/about', (req, res) => {
     res.render('about', { title: 'About' });

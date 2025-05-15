@@ -155,16 +155,26 @@ async function seedDatabase() {
 // --- Express route to trigger database seeding ---
 router.get('/', async (req, res) => {
   try {
+    console.log("Starting seed route handler");
+    
     // Check if the Country table already has records
     const count = await Country.count();
+    console.log("Current country count:", count);
+    
     if (count > 0) {
-      return res.send("Database already seeded.");
+      console.log("Database already seeded, skipping");
+      return res.render('index', { title: 'Home', user: req.session.user });
     }
+
+    console.log("Database empty, starting seed process");
     await seedDatabase();
-    res.send("Database seeded successfully!");
+    console.log("Seed process completed successfully");
+    
+    res.render('index', { title: 'Home', user: req.session.user });
   } catch (err) {
+    console.log("Error encountered in seed route:");
     console.error("Seeding failed:", err);
-    res.status(500).send("Error seeding database.");
+    res.status(500).render('index', { title: 'Home', user: req.session.user });
   }
 });
 
