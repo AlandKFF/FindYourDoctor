@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const bcrypt = require('bcryptjs');
 const { User } = require('../models/');
-const { ensureAuthenticated } = require('../middlewares/auth.js');
+const { ensureAuthenticated, ensureAdmin } = require('../middlewares/auth.js');
 
 router.get('/', async (req, res) => {
     if (req.session.user) {
@@ -178,6 +178,21 @@ router.get('/logout', ensureAuthenticated, (req, res) => {
         res.clearCookie('connect.sid'); // Clear session cookie
         res.redirect('/');
     });
+});
+
+router.get('/Dashboard', ensureAuthenticated, async (req, res) => {
+    try {
+        console.log('GET /Dashboard - Attempting to render dashboard');
+        res.render('auth/Dashboard', { title: 'Dashboard' });
+        console.log('GET /Dashboard - Dashboard rendered successfully');
+    } catch (error) {
+        console.error('Error in GET /Dashboard:', error.message);
+        console.error('Full error stack:', error.stack);
+        res.status(500).render('error', {
+            error: 'Failed to load dashboard',
+            title: 'Error'
+        });
+    }
 });
 
 module.exports = router;
