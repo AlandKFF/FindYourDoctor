@@ -45,31 +45,23 @@ module.exports.ensureRole = (role) => {
 
 // Middleware to check if the user is admin (by role)
 // Note: This is similar to ensureRole, consider consolidating if needed.
-module.exports.ensureAdmin = (role) => {
-  return (req, res, next) => {
-    console.log('ensureAdmin middleware triggered');
-    console.log('Request session:', req.session);
-    
-    if (!req.session) {
-      console.log('No session found');
-      return res.status(403).send('Forbidden: No session');
-    }
+module.exports.ensureAdmin = (req, res, next) => {
+  console.log('ensureAdmin middleware triggered');
+  if (!req.session) {
+    console.log('No session found');
+    return res.redirect('/auth/');
+  }
 
-    console.log('Session user:', req.session.user);
-    
-    if (!req.session.user) {
-      console.log('No user found in session');
-      return res.status(403).send('Forbidden: No user');
-    }
+  if (!req.session.user) {
+    console.log('No user found in session');
+    return res.redirect('/auth/');
+  }
 
-    console.log('User role:', req.session.user.role);
-    
-    if (req.session.user.role === 'admin') {
-      console.log('User is an admin:', req.session.user);
-      return next();
-    }
+  if (req.session.user.role !== 'admin') {
+    console.log('User is not an admin:', req.session.user.role);
+    return res.status(403).send('Forbidden: Admin access required');
+  }
 
-    console.log('User is not an admin. Current role:', req.session.user.role);
-    res.status(403).send('Forbidden: Insufficient permissions');
-  };
+  console.log('Admin access granted:', req.session.user);
+  next();
 };

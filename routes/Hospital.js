@@ -227,10 +227,18 @@ router.post('/create', ensureAuthenticated, ensureStatus('accept'), async (req, 
         });
         console.log(`HospitalUser record created for user ${user_id} with status ${userHospitalStatus}.`);
 
-        res.redirect(`/hospitals/${hospital.hospital_id}`);
+        if (user_role === 'admin') {
+            res.redirect('/hospitals'); // Redirect to hospitals list for admin
+        } else {
+            res.redirect(`/hospitals/${hospital.hospital_id}`); // Redirect to hospital profile for non-admin
+        }
     } catch (error) {
         console.error('Error creating hospital:', error);
-        res.status(500).render('error', { message: 'Failed to create hospital. Please try again later.' });
+        res.redirect('/hospitals');
+        // res.status(500).render('layouts/main', { 
+        //     body: '',
+        //     error: 'Failed to create hospital. Please try again later.'
+        // });
     }
 });
 
@@ -767,10 +775,17 @@ router.post('/create', ensureAuthenticated, ensureStatus('accept'), async (req, 
         });
         console.log(`HospitalUser record created for user ${user_id} with status ${userHospitalStatus}.`);
 
-        res.redirect(`/hospitals/${hospital.hospital_id}`);
+        if (user_role === 'admin') {
+            res.redirect('/hospitals'); // Redirect to hospitals list for admin
+        } else {
+            res.redirect(`/hospitals/${hospital.hospital_id}`); // Redirect to hospital profile for non-admin
+        }
     } catch (error) {
         console.error('Error creating hospital:', error);
-        res.status(500).render('error', { message: 'Failed to create hospital. Please try again later.' });
+        res.status(500).render('layouts/main', { 
+            body: '',
+            error: 'Failed to create hospital. Please try again later.'
+        });
     }
 });
 
@@ -1307,10 +1322,17 @@ router.post('/create', ensureAuthenticated, ensureStatus('accept'), async (req, 
         });
         console.log(`HospitalUser record created for user ${user_id} with status ${userHospitalStatus}.`);
 
-        res.redirect(`/hospitals/${hospital.hospital_id}`);
+        if (user_role === 'admin') {
+            res.redirect('/hospitals'); // Redirect to hospitals list for admin
+        } else {
+            res.redirect(`/hospitals/${hospital.hospital_id}`); // Redirect to hospital profile for non-admin
+        }
     } catch (error) {
         console.error('Error creating hospital:', error);
-        res.status(500).render('error', { message: 'Failed to create hospital. Please try again later.' });
+        res.status(500).render('layouts/main', { 
+            body: '',
+            error: 'Failed to create hospital. Please try again later.'
+        });
     }
 });
 
@@ -1847,7 +1869,11 @@ router.post('/create', ensureAuthenticated, ensureStatus('accept'), async (req, 
         });
         console.log(`HospitalUser record created for user ${user_id} with status ${userHospitalStatus}.`);
 
-        res.redirect(`/hospitals/${hospital.hospital_id}`);
+        if (user_role === 'admin') {
+            res.redirect('/hospitals'); // Redirect to hospitals list for admin
+        } else {
+            res.redirect(`/hospitals/${hospital.hospital_id}`); // Redirect to hospital profile for non-admin
+        }
     } catch (error) {
         console.error('Error creating hospital:', error);
         res.status(500).render('error', { message: 'Failed to create hospital. Please try again later.' });

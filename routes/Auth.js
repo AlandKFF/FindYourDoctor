@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const bcrypt = require('bcryptjs');
-const { User } = require('../models/');
+const { User, Hospital, Doctor, ContactReports } = require('../models/');
 const { ensureAuthenticated, ensureAdmin } = require('../middlewares/auth.js');
 
 router.get('/', async (req, res) => {
@@ -34,8 +34,17 @@ router.post('/register', async (req, res) => {
     try {
         console.log('POST /register - Starting registration process');
         
-        const { first_name, last_name, email, password, phone_number, bio, privacy_policy_agreement, terms_of_service_agreement } = req.body;
+        const { first_name, last_name, email, password, phone_number, bio } = req.body;
+        let { privacy_policy_agreement, terms_of_service_agreement } = req.body;
         
+        if (privacy_policy_agreement == 'on') {
+            privacy_policy_agreement = true;
+        } else {
+            privacy_policy_agreement = false;
+        }
+        if (terms_of_service_agreement == 'on') {
+            terms_of_service_agreement = true;
+        }
         // Validate agreements
         if (!privacy_policy_agreement || !terms_of_service_agreement) {
             return res.render('auth/register', {
@@ -180,17 +189,68 @@ router.get('/logout', ensureAuthenticated, (req, res) => {
     });
 });
 
-router.get('/Dashboard', ensureAuthenticated, async (req, res) => {
+router.get('/dashboard', ensureAdmin, async (req, res) => {
     try {
-        console.log('GET /Dashboard - Attempting to render dashboard');
-        res.render('auth/Dashboard', { title: 'Dashboard' });
-        console.log('GET /Dashboard - Dashboard rendered successfully');
+        console.log('GET /dashboard - Attempting to render dashboard');
+        
+        // Verify admin role again as extra security check
+        if (req.session.user.role !== 'admin') {
+            console.log('GET /dashboard - Unauthorized access attempt by non-admin user');
+            return res.status(403).render('error', {
+                error: 'You do not have permission to access this page',
+                title: 'Access Denied'
+            });
+        }
+        
+        // Fetch statistics for dashboard
+        const [userCount, pendingUserCount, hospitalCount, pendingHospitalCount, doctorCount, contactReportCount] = await Promise.all([
+            User.count(),
+            User.count({ where: { status: 'pending' } }),
+            Hospital.count(),
+            Hospital.count({ where: { status: 'pending' } }),
+            Doctor.count(),
+            ContactReports.count()
+        ]);
+        
+        // Get recent contact reports
+        const recentReports = await ContactReports.findAll({
+            limit: 5,
+            order: [['created_at', 'DESC']]
+        });
+        
+        // Get pending user registrations
+        const pendingUsers = await User.findAll({
+            where: { status: 'pending' },
+            limit: 5,
+            order: [['user_id', 'DESC']]
+        });
+        
+        // Pass user data and statistics to dashboard view
+        const userData = {
+            title: 'Admin Dashboard',
+            user: req.session.user,
+            stats: {
+                userCount,
+                pendingUserCount,
+                hospitalCount,
+                pendingHospitalCount,
+                doctorCount,
+                contactReportCount
+            },
+            recentReports,
+            pendingUsers
+        };
+
+        res.render('auth/Dashboard', userData);
+        console.log('GET /dashboard - Dashboard rendered successfully');
     } catch (error) {
-        console.error('Error in GET /Dashboard:', error.message);
+        console.error('Error in GET /dashboard:', error.message);
         console.error('Full error stack:', error.stack);
+        
+        // Return a more specific error message
         res.status(500).render('error', {
-            error: 'Failed to load dashboard',
-            title: 'Error'
+            error: 'An error occurred while loading the dashboard. Please try again later.',
+            title: 'Dashboard Error'
         });
     }
 });
