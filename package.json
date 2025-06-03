@@ -4,14 +4,15 @@
   "main": "app.js",
   "scripts": {
     "start": "node app.js",
-    "build:css": "npx tailwindcss -i ./src/styles/tailwind.css -o ./public/css/styles.css --watch"
+    "build:css": "postcss ./src/styles/tailwind.css -o ./public/css/styles.css --env production",
+    "dev:css": "postcss ./src/styles/tailwind.css -o ./public/css/styles.css --watch"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "description": "",
   "dependencies": {
-    "apply": "^0.2.19",
+    "apply": "^0.11.3",
     "bcryptjs": "^3.0.2",
     "body-parser": "^1.20.3",
     "connect-session-sequelize": "^7.1.7",
@@ -27,8 +28,11 @@
     "socket.io": "^4.8.1"
   },
   "devDependencies": {
+    "@tailwindcss/postcss": "^4.1.8",
     "autoprefixer": "^10.4.21",
-    "postcss": "^8.5.3",
-    "tailwindcss": "^4.0.17"
+    "postcss": "^8.5.4",
+    "postcss-cli": "^11.0.1",
+    "tailwindcss": "^4.1.8",
+    "tailwindcss-cli": "^0.1.2"
   }
 }
