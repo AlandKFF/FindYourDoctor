@@ -96,7 +96,6 @@
                     <div>
                     <h3 class="text-lg font-semibold"><%= doctor.title %> <%= doctor.first_name %> <%= doctor.last_name %></h3>
                     <p class="text-gray-600"><%= doctor.doctor_certifications[0]?.title || 'Specialist' %></p>
-                    </div>
                 </div>
                 <a href="/doctors/<%= doctor.doctor_id %>" class="text-primary-600 hover:text-primary-800 font-medium">
                     View Profile →

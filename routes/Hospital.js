@@ -2,7 +2,8 @@ const express = require('express');
 const router = express.Router();
 const { Hospital, Area, City, Country, HospitalUser, User } = require('../models');
 const { Op } = require('sequelize');
-const { ensureAuthenticated, ensureStatus, ensureRole, HospitalFacility, HospitalPhone, Doctor } = require('../middlewares/auth.js');
+const { ensureAuthenticated, ensureStatus, ensureRole } = require('../middlewares/auth.js');
+const { HospitalFacility, HospitalPhone, Doctor, DoctorCertification } = require('../models');
 
 // GET /hospitals - List all hospitals with optional filtering
 router.get('/', async (req, res) => {

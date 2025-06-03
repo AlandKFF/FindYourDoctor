@@ -1,6 +1,8 @@
 const express = require('express');
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 3003;
+console.log("port is ", PORT);
+
 
 const bodyParser = require('body-parser');
 const path = require('path');
@@ -24,7 +26,7 @@ app.use(methodOverride('_method', { methods: ['POST', 'GET'] }));
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(sessionMiddleware);
 app.use(setLoggedInUser);
-app.use(ensureAdmin); 
+app.use(ensureAdmin); // This applies to ALL routes
 
 // View engine
 app.set('view engine', 'ejs');
@@ -58,7 +60,7 @@ app.get('/privacy', (req, res) => {
 });
 
 // Sync Sequelize & Start Server 
-sequelize.sync() // {force: true}
+sequelize.sync({force: true}) // {force: true}
     .then(() => {
         app.listen(PORT, () => {
             console.log(`Server is running on port ${PORT}`);
