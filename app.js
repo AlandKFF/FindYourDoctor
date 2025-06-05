@@ -26,7 +26,7 @@ app.use(methodOverride('_method', { methods: ['POST', 'GET'] }));
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(sessionMiddleware);
 app.use(setLoggedInUser);
-app.use(ensureAdmin); // This applies to ALL routes
+// app.use(ensureAdmin); // Removed from here as it applies to ALL routes
 
 // View engine
 app.set('view engine', 'ejs');

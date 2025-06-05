@@ -17,7 +17,7 @@ COPY . .
 RUN npm run build:css
 
 # Expose the port the app runs on
-EXPOSE 3003
+EXPOSE 3000
 
 # Command to run the application
 CMD ["npm", "start"]

@@ -3,24 +3,13 @@ services:
     build: .
     ports:
       - "3003:3003"
-    depends_on:
-      - db
     environment:
       - PORT=3003
-      - DB_HOST=db
-      - DB_USER=root
-      - DB_PASSWORD=password
-      - DB_NAME=findyourdoctor
-
-  db:
-    image: mysql:8.0
-    environment:
-      - MYSQL_ROOT_PASSWORD=password
-      - MYSQL_DATABASE=findyourdoctor
-    ports:
-      - "3306:3306"
-    volumes:
-      - mysql-data:/var/lib/mysql
+      - DB_HOST=mysql-hastyar.alwaysdata.net
+      - DB_USER=hastyar
+      - DB_PASSWORD=4_GJK#EHb.mrHX@
+      - DB_NAME=hastyar_doctors
+      - SESSION_SECRET=hastyar's secret key for session
 
 volumes:
   mysql-data:
