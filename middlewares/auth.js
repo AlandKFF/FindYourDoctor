@@ -4,7 +4,7 @@
 module.exports.ensureAuthenticated = (req, res, next) => {
   console.log('ensureAuthenticated middleware triggered');
   if (req.session) {
-    console.log('Session exists:', req.session);
+    console.log('session exists:', req.session);
     if (req.session.user) {
       console.log('User is authenticated:', req.session.user);
       return next();

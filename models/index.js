@@ -54,7 +54,7 @@ const sessionStore = new SequelizeStore({ db: sequelize });
 // Call this once, before your Express app starts listening:
 sessionStore.sync()
   .then(() => {
-    console.log("✅ Session store synchronized (sessions table created).");
+    console.log("✅ session store synchronized (sessions table created).");
   })
   .catch(err => {
     console.error("❌ Failed to sync session store:", err);

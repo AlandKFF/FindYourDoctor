@@ -5,16 +5,16 @@ const { sequelize } = require('../models'); // adjust path as needed
 const SequelizeStore = require('connect-session-sequelize')(session.Store);
 
 // Create a Sequelize Store instance
-const store = new SequelizeStore({ db: sequelize, tableName: 'sessions' });
+const store = new SequelizeStore({ db: sequelize, tableName: 'session' });
 
 // Sync the session store to ensure the session table exists
 store.sync().then(() => {
-  console.log('Session store synced successfully.');
+  console.log('session store synced successfully.');
 }).catch(err => {
   console.error('Failed to sync session store:', err);
 });
 
-// Session middleware configuration
+// session middleware configuration
 const sessionMiddleware = session({
   secret: process.env.SESSION_SECRET || 'mySecretKey',
   store: store,
@@ -32,9 +32,9 @@ const sessionMiddleware = session({
 const setLoggedInUser = (req, res, next) => {
   try {
     console.log('Setting loggedInUserId middleware called.');
-    console.log('All Session:', req.session); // Log the session object for debugging
+    console.log('All session:', req.session); // Log the session object for debugging
     if (req.session && req.session.user) {
-      console.log('Session user:', req.session.user);
+      console.log('session user:', req.session.user);
     } else {
       console.log('No user found in session.');
     }
