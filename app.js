@@ -10,7 +10,7 @@ const expressLayouts = require('express-ejs-layouts');
 const methodOverride = require('method-override');
 require('dotenv').config();
 const { sequelize } = require('./models');
-const {sessionMiddleware, setLoggedInUser, ensureAdmin} = require('./middlewares/session.js');
+const {sessionMiddleware, setLoggedInUser} = require('./middlewares/session.js');
 
 // Import routes
 const DoctorRouter = require('./routes/Doctor');
