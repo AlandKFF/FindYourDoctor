@@ -1,7 +1,7 @@
 const express = require('express');
 const app = express();
-const PORT = process.env.PORT || 8080;
-console.log("port is ", PORT);
+// const PORT = process.env.PORT || 3000;
+
 
 
 const bodyParser = require('body-parser');
@@ -59,6 +59,8 @@ app.get('/privacy', (req, res) => {
     res.render('privacy', { title: 'Privacy' });
 });
 
+const PORT = process.env.PORT || 3000;
+console.log("port is ", PORT);
 // Sync Sequelize & Start Server 
 sequelize.sync({alter: true}) // {force: true}
     .then(() => {
