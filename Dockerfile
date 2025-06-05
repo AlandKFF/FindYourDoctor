@@ -17,7 +17,7 @@ COPY . .
 RUN npm run build:css
 
 # 6. Expose the port your app listens on
-EXPOSE 3000
+EXPOSE 8080
 
 # 7. Launch the app
 CMD ["npm", "start"]

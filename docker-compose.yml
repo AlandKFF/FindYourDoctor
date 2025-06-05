@@ -28,12 +28,12 @@ services:
       mysql:
         condition: service_healthy
     ports:
-      - "3003:3003"
+      - "8080:8080"
     environment:
       # These will override process.env.* inside the container
       # (DB_HOST must match the service name "mysql" → Docker DNS resolves it)
       - NODE_ENV=development
-      - PORT=3003
+      - PORT=8080
       - DB_HOST=mysql
       - DB_NAME=findyourdoctor
       - DB_USER=findyourdoctor_user
