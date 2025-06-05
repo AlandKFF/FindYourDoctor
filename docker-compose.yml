@@ -38,7 +38,7 @@ services:
       - DB_NAME=findyourdoctor
       - DB_USER=findyourdoctor_user
       - DB_PASSWORD=findyourdoctor_pass
-      - SESSION_SECRET="hastyar's secret key for session"
+      - SESSION_SECRET="hastyar's secret key for user_sessions"
     # Optional: You can mount your source code here if you want live-reload:
     # volumes:
     #   - ./:/app

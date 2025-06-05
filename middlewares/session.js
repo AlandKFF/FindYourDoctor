@@ -2,20 +2,20 @@ const session = require("express-session");
 const { sequelize } = require("../models"); // adjust path as needed
 const SequelizeStore = require("connect-session-sequelize")(session.Store);
 
-// Create a SequelizeStore instance that points to “sessions” (lowercase, plural)
+// Create a SequelizeStore instance that points to "user_sessions" (lowercase, plural)
 const store = new SequelizeStore({
   db: sequelize,
-  tableName: "sessions",
+  tableName: "user_sessions",
 });
 
-// Sync the session store to ensure the “sessions” table exists
+// Sync the session store to ensure the "user_sessions" table exists
 store
   .sync()
   .then(() => {
-    console.log("session store synced successfully.");
+    console.log("user_sessions store synced successfully.");
   })
   .catch((err) => {
-    console.error("Failed to sync session store:", err);
+    console.error("Failed to sync user_sessions store:", err);
   });
 
 // session middleware configuration

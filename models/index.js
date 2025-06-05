@@ -50,20 +50,20 @@ sequelize.authenticate()
   
   // … (some lines where you set up `sequelize`)
   
-  // Add `tableName: 'sessions'` here so Sequelize always looks for (or creates) “sessions”
+  // Add `tableName: 'user_sessions'` here so Sequelize always looks for (or creates) "user_sessions"
   const sessionStore = new SequelizeStore({
     db: sequelize,
-    tableName: "sessions",
+    tableName: "user_sessions",
   });
   
   // Call this once, before your Express app starts listening:
   sessionStore
     .sync()
     .then(() => {
-      console.log("✅ session store synchronized (sessions table created).");
+      console.log("✅ user_sessions store synchronized (user_sessions table created).");
     })
     .catch((err) => {
-      console.error("❌ Failed to sync session store:", err);
+      console.error("❌ Failed to sync user_sessions store:", err);
     });
   
 
