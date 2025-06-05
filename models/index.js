@@ -1,28 +1,65 @@
+// db.js
 const { Sequelize, DataTypes } = require('sequelize');
 require('dotenv').config();
-// const DB_password = process.env.DB_PASSWORD
 
+// 1. Ensure we have a DB_NAME, DB_USER, DB_PASSWORD, and DB_HOST in .env
+const {
+  DB_NAME,
+  DB_USER,
+  DB_PASSWORD,
+  DB_HOST
+} = process.env;
+
+if (!DB_NAME || !DB_USER || !DB_PASSWORD || !DB_HOST) {
+  throw new Error(
+    "Missing one of the required environment variables: " +
+    "DB_NAME, DB_USER, DB_PASSWORD, or DB_HOST."
+  );
+}
+
+// 2. Initialize Sequelize with no hard-coded fallback defaults
 const sequelize = new Sequelize(
-  process.env.DB_NAME || "findyourdoctor",    // Database name
-  process.env.DB_USER || "root",    // Username
-  process.env.DB_PASSWORD || "(Aland&DB)", // Password
+  DB_NAME,         // Database name (e.g., "hastyar_doctors")
+  DB_USER,         // MySQL username
+  DB_PASSWORD,     // MySQL password
   {
-    host: process.env.DB_HOST || 'localhost', // Hostname
-    dialect: 'mysql',
+    host: DB_HOST, // MySQL host (e.g., "localhost" or your remote host)
+    dialect: "mysql",
     dialectOptions: {
-      // Depending on InfinityFree, SSL may not be required:
+      // If SSL is required by your MySQL host, uncomment and configure:
       // ssl: { require: true, rejectUnauthorized: false }
     }
   }
 );
 
+// 3. Authenticate and log the actual DB name
 sequelize.authenticate()
   .then(() => {
-    console.log('Connection to find_your_doctor database has been established successfully.');
+    console.log(
+      `Connection to "${DB_NAME}" database has been established successfully.`
+    );
   })
   .catch(err => {
-    console.error('Unable to connect to the database:', err);
+    console.error(
+      `Unable to connect to the "${DB_NAME}" database:`, err
+    );
   });
+
+// 4. (Optional) If you are using express-session + connect-session-sequelize,
+//    synchronize the `sessions` table so it’s created automatically:
+const session = require("express-session");
+const SequelizeStore = require("connect-session-sequelize")(session.Store);
+const sessionStore = new SequelizeStore({ db: sequelize });
+
+// Call this once, before your Express app starts listening:
+sessionStore.sync()
+  .then(() => {
+    console.log("✅ Session store synchronized (sessions table created).");
+  })
+  .catch(err => {
+    console.error("❌ Failed to sync session store:", err);
+  });
+
 
 // --- Geographic Data ---
 const Country = sequelize.define('countries', {
@@ -390,6 +427,7 @@ HospitalFacility.belongsTo(Hospital, { foreignKey: 'hospital_id' });
 
 module.exports = {
     sequelize,
+    sessionStore,
     Country,
     City,
     Area,
