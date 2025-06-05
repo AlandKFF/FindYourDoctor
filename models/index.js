@@ -45,20 +45,27 @@ sequelize.authenticate()
     );
   });
 
-// 4. (Optional) If you are using express-session + connect-session-sequelize,
-//    synchronize the `sessions` table so it’s created automatically:
-const session = require("express-session");
-const SequelizeStore = require("connect-session-sequelize")(session.Store);
-const sessionStore = new SequelizeStore({ db: sequelize });
-
-// Call this once, before your Express app starts listening:
-sessionStore.sync()
-  .then(() => {
-    console.log("✅ session store synchronized (sessions table created).");
-  })
-  .catch(err => {
-    console.error("❌ Failed to sync session store:", err);
+  const session = require("express-session");
+  const SequelizeStore = require("connect-session-sequelize")(session.Store);
+  
+  // … (some lines where you set up `sequelize`)
+  
+  // Add `tableName: 'sessions'` here so Sequelize always looks for (or creates) “sessions”
+  const sessionStore = new SequelizeStore({
+    db: sequelize,
+    tableName: "sessions",
   });
+  
+  // Call this once, before your Express app starts listening:
+  sessionStore
+    .sync()
+    .then(() => {
+      console.log("✅ session store synchronized (sessions table created).");
+    })
+    .catch((err) => {
+      console.error("❌ Failed to sync session store:", err);
+    });
+  
 
 
 // --- Geographic Data ---

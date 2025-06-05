@@ -1,15 +1,45 @@
+version: "3.8"
+
 services:
+  mysql:
+    image: mysql:8.0
+    container_name: fydb_mysql
+    restart: unless-stopped
+    environment:
+      # Be sure these match Sequelize’s user/password
+      MYSQL_ROOT_PASSWORD: secretpassword
+      MYSQL_DATABASE: findyourdoctor
+      MYSQL_USER:    findyourdoctor_user
+      MYSQL_PASSWORD: findyourdoctor_pass
+    volumes:
+      - mysql-data:/var/lib/mysql
+    ports:
+      - "3306:3306"
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
   app:
     build: .
+    container_name: fydb_app
+    depends_on:
+      mysql:
+        condition: service_healthy
     ports:
       - "3003:3003"
     environment:
+      # These will override process.env.* inside the container
+      # (DB_HOST must match the service name "mysql" → Docker DNS resolves it)
+      - NODE_ENV=development
       - PORT=3003
-      - DB_HOST=mysql-hastyar.alwaysdata.net
-      - DB_USER=hastyar
-      - DB_PASSWORD=4_GJK#EHb.mrHX@
-      - DB_NAME=hastyar_doctors
-      - SESSION_SECRET=hastyar's secret key for session
-
-volumes:
-  mysql-data:
+      - DB_HOST=mysql
+      - DB_NAME=findyourdoctor
+      - DB_USER=findyourdoctor_user
+      - DB_PASSWORD=findyourdoctor_pass
+      - SESSION_SECRET="hastyar's secret key for session"
+    # Optional: You can mount your source code here if you want live-reload:
+    # volumes:
+    #   - ./:/app
+    #   - /app/node_modules

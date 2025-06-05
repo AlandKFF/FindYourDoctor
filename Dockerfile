@@ -1,23 +1,23 @@
+# Dockerfile
 FROM node:18-alpine
 
-# Create app directory
+# 1. Create /app folder inside container
 WORKDIR /app
 
-# Install app dependencies
-# A wildcard is used to ensure both package.json AND package-lock.json are copied
+# 2. Copy package.json & package-lock.json
 COPY package*.json ./
 
-# Install all dependencies including dev dependencies
+# 3. Install dependencies
 RUN npm install --include=dev
 
-# Bundle app source
+# 4. Copy the rest of your source code
 COPY . .
 
-# Build Tailwind CSS (using npm script instead of direct npx command)
+# 5. Build Tailwind (if you have a script "build:css" in package.json)
 RUN npm run build:css
 
-# Expose the port the app runs on
+# 6. Expose the port your app listens on
 EXPOSE 3000
 
-# Command to run the application
+# 7. Launch the app
 CMD ["npm", "start"]
